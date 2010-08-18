@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Boxed!</title>
+		<meta name="viewport" content="width=device-width"/>
+		
+		<link rel="stylesheet" href="desktop.css">
+		
+		<script type="text/javascript" src="libraries/raphael.js"></script>
+		<script type="text/javascript" src="libraries/raphael.path.methods.js"></script>
+		<script type="text/javascript" src="src/boxed.js"></script>
+	</head>
+	<body>
+		<div id="play-field"></div>
+		
+		<script type="text/javascript">
+			window.onload = function() {
+				boxed = new Boxed(document.getElementById("play-field"));
+			}
+			window.onresize = function() {
+				var playField = document.getElementById("play-field");
+				boxed.resize(playField.offsetWidth, playField.offsetHeight);
+			}
+		</script>
+	</body>
+</html>
