@@ -166,37 +166,53 @@ Boxed.prototype = {
 		block.setPosition(x, y);
 		this.pieces.push(block);
 		
-		block.drag(
-			function () {
-				block.initialPosition = block.getPosition();
-				block.lastPosition = block.getPosition();
-				block.ddx = 0;
-				block.ddy = 0;
-			}.bindScope(this),
-			function (dx, dy) {
-				block.lastPosition = block.getPosition();
+		block.drag(this.grabbed.curry(block).bindScope(this),
+				   this.moved.curry(block).bindScope(this),
+				   this.released.curry(block).bindScope(this));
+	},
+	
+	grabbed: function (block) {
+		block.canvas.style.webkitTransition = '';
+		block.initialPosition = block.getPosition();
+		block.lastPosition = block.getPosition();
+		block.ddx = 0;
+		block.ddy = 0;
+	},
+	
+	moved: function (block, dx, dy) {
+		block.lastPosition = block.getPosition();
 
-				var x = block.lastPosition.x + (dx - block.ddx);
-				var y = block.lastPosition.y + (dy - block.ddy);
-				
-				block.ddx = dx;
-				block.ddy = dy;
-				block.setPosition(x, y);
-				
-				for (i in this.pieces) {
-					var piece = this.pieces[i];
-					
-					if (piece != block) {
-						if (boundingBoxTest(block.getBBox(), piece.getBBox())) {							
-							resolution = getBlockCollisionResolution(block, piece, this.blockSize);
-							block.setPosition(x + resolution.x, y + resolution.y);
-						}
-					}
+		var x = block.lastPosition.x + (dx - block.ddx);
+		var y = block.lastPosition.y + (dy - block.ddy);
+		
+		block.ddx = dx;
+		block.ddy = dy;
+		block.setPosition(x, y);
+		
+		for (i in this.pieces) {
+			var piece = this.pieces[i];
+			
+			if (piece != block) {
+				if (boundingBoxTest(block.getBBox(), piece.getBBox())) {							
+					resolution = getBlockCollisionResolution(block, piece, this.blockSize);
+					block.setPosition(x + resolution.x, y + resolution.y);
 				}
-			}.bindScope(this),
-			function() {
+			}
+		}
+	},
+	
+	released: function (block) {
+		var blockSize = this.blockSize
+		var position = block.getPosition();
 
-		});
+		var xoffset = position.x.mod(blockSize);
+		var yoffset = position.y.mod(blockSize);
+
+		var correction = { x: 0, y: 0 };
+		correction.x += xoffset < blockSize / 2 ? -xoffset : (blockSize - xoffset);
+		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
+
+		block.setPositionAnimated(position.x + correction.x, position.y + correction.y);
 	}
 	
 };
@@ -252,20 +268,15 @@ Block.prototype = {
 			return { x: point.x + vector.x, y: point.y + vector.y };
 		}
 
-		var isEqual = function(vector1, vector2) {
+		var isEqual = function (vector1, vector2) {
 			return vector1.x == vector2.x && vector1.y == vector2.y;
 		}
 
-		var get = function(x, y) {
+		var get = function (x, y) {
 			var row = matrix[y];
-
-			if (row) {
-				return row[x];
-			} else {
-				return null;
-			}
+			return row ? row[x] : null;
 		}
-
+		
 		var findBlock = function(matrix) {
 			for (var i = 0; i < matrix.length; i++) {
 				for (var j = 0; j < matrix[i].length; j++) {
@@ -282,12 +293,17 @@ Block.prototype = {
 		var turns = 0;
 		var direction = {x: 1, y: 0 };
 		var position = start;
-		var gposition = { x: position.x * blockSize, y: position.y * blockSize };
-		gposition = translate(gposition, { x: direction.x * blockSize, y: direction.y * blockSize });
+		var pointer = { x: position.x * blockSize, y: position.y * blockSize };
+		pointer = translate(pointer, { x: direction.x * blockSize, y: direction.y * blockSize });
 
 		ctx.fillStyle = "rgb(200,0,0)";
 		ctx.beginPath();
-		ctx.moveTo(gposition.x, gposition.y);
+		ctx.moveTo(pointer.x, pointer.y);
+		
+		var lineTo = function (dx, dy) {
+			pointer = translate(pointer, { x: dx, y: dy });
+			ctx.lineTo(pointer.x, pointer.y);
+		}
 
 		do {
 			var ff = translate(position, direction);
@@ -308,16 +324,12 @@ Block.prototype = {
 				position = ff;
 				turns = 0;
 				if (!frValue) {
-					//ctx.lineTo(direction.x * blockSize, direction.y * blockSize);
-					gposition = translate(gposition, { x: direction.x * blockSize, y: direction.y * blockSize });
-					ctx.lineTo(gposition.x, gposition.y);
+					lineTo(direction.x * blockSize, direction.y * blockSize);
 				}
 			} else {
 				// turn left
 				direction = rotateRight(direction);
-				//ctx.lineTo(direction.x * blockSize, direction.y * blockSize);
-				gposition = translate(gposition, { x: direction.x * blockSize, y: direction.y * blockSize });
-				ctx.lineTo(gposition.x, gposition.y);
+				lineTo(direction.x * blockSize, direction.y * blockSize);
 				turns++;
 			}
 
@@ -335,6 +347,13 @@ Block.prototype = {
 		this._x = x;
 		this._y = y;
 		this.canvas.style.webkitTransform = ['translate3d(', x, 'px,', y, 'px,', '0px)'].join('');
+	},
+	
+	setPositionAnimated: function (x, y) {
+		var style = this.canvas.style;
+		style.webkitTransition = "-webkit-transform 0.2s ease-in";
+		this.canvas.addEventListener('webkitTransitionEnd', function () { style.webkitTransition = ''; } );
+		this.setPosition(x, y);
 	},
 	
 	getPosition: function() {
@@ -395,8 +414,7 @@ Block.prototype = {
 			document.addEventListener(move, _moved, false);
 			document.addEventListener(up, _released, false);			
 		});
-	}
-		
+	}	
 }
 
 var Shapes = {
@@ -409,6 +427,6 @@ var Shapes = {
 	T: [[0, 1, 0, 0],
 		[0, 1, 1, 0],
 		[0, 1, 1, 0],
-		[0, 1, 1, 1]]
+		[1, 1, 1, 1]]
 		
 }
