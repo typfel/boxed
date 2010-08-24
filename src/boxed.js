@@ -32,10 +32,10 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	var xdelta = bbox1.x - bbox2.x;
 	var ydelta = bbox1.y - bbox2.y;
 		
-	var xoffset =  boxed.blockSize - xdelta.mod(blockSize);
-	var yoffset =  boxed.blockSize - ydelta.mod(blockSize);
-	var rxoffset = boxed.blockSize - xoffset;
-	var ryoffset = boxed.blockSize - yoffset;
+	var xoffset =  blockSize - xdelta.mod(blockSize);
+	var yoffset =  blockSize - ydelta.mod(blockSize);
+	var rxoffset = blockSize - xoffset;
+	var ryoffset = blockSize - yoffset;
 		
 	var len = block1.matrix.length;
 		
@@ -150,33 +150,219 @@ function Boxed(containerElement) {
 	this.container = containerElement;
 	this.pieces = [];
 	this.blockSize = 40;
+	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
-	this.addPiece(Shapes.L, 0, 0);
-	this.addPiece(Shapes.T, 0, 160);
+	this.addBlock(Shapes.L, 50, 50);
+	this.addBlock(Shapes.T, 100, 160);
 }
 
 Boxed.prototype = {
 	
+	_addToOccupationGrid: function(block) {
+		var position = block.getPosition();
+		var x = Math.floor(block.getPosition().x / this.blockSize);
+		var y = Math.floor(block.getPosition().y / this.blockSize);
+		
+		var xlen = block.matrix.length;
+		var ylen = block.matrix[0].length;
+		
+		var blockIndex = this.pieces.indexOf(block);
+		
+		for (var i = 0; i < ylen; i++) {
+			for (var j = 0; j < xlen; j++) {
+				if (block.matrix[i][j]) {
+					this.occupationGrid[y + i][x + j] = blockIndex;
+				}
+			}
+		}
+	},
+	
+	_removeFromOccupationGrid: function(block) {
+		var position = block.getPosition();
+		var x = Math.floor(block.getPosition().x / this.blockSize);
+		var y = Math.floor(block.getPosition().y / this.blockSize);
+		
+		var xlen = block.matrix.length;
+		var ylen = block.matrix[0].length;
+		
+		for (var i = 0; i < ylen; i++) {
+			for (var j = 0; j < xlen; j++) {
+				if (block.matrix[i][j]) {
+					delete this.occupationGrid[y + i][x + j];
+				}
+			}
+		}
+	},
+	
+	_mergeBlocks: function (blocks) {		
+		var mergedMatrix = [];
+		
+		var topLeftCorner = { x: this.gridWidth, y: this.gridHeight };
+		var bottomRightCorner = { x: 0, y: 0 };
+		
+		for (var i in blocks) {
+			var block = this.pieces[i];
+			
+			var x = Math.floor(block.getPosition().x / this.blockSize);
+			var y = Math.floor(block.getPosition().y / this.blockSize);
+			
+			topLeftCorner.x = Math.min(topLeftCorner.x, x);
+			topLeftCorner.y = Math.min(topLeftCorner.y, y);
+			
+			bottomRightCorner.x = Math.max(bottomRightCorner.x, x + block.matrix[0].length);
+			bottomRightCorner.y = Math.max(bottomRightCorner.y, y + block.matrix.length);
+		}
+		
+		var matrixHeight = bottomRightCorner.y - topLeftCorner.y;
+		for (var i = 0; i < matrixHeight; i++) {
+			mergedMatrix[i] = new Array();
+		}
+		
+		for (var i in blocks) {
+			var block = this.pieces[i];
+			
+			var xoffset = Math.floor(block.getPosition().x / this.blockSize) - topLeftCorner.x;
+			var yoffset = Math.floor(block.getPosition().y / this.blockSize) - topLeftCorner.y;
+			
+			for (var y = 0; y < block.matrix.length; y++) {
+				for (var x = 0; x < block.matrix[y].length; x++) {
+					if (block.matrix[y][x]) {
+						mergedMatrix[yoffset + y][xoffset + x] = 1;
+					}
+				}
+			}
+			
+			this.removeBlock(block);
+		}
+		
+		var shrunkenMatrix = [];
+		for (var i = 0; i < matrixHeight / 2; i++) {
+			shrunkenMatrix[i] = new Array();
+		}
+				
+		for (var y in mergedMatrix) {
+			for (var x in mergedMatrix[y]) {
+				if (!(x % 2 || y % 2)) {
+					shrunkenMatrix[y / 2][x / 2] = 1;
+				}
+			}
+		}
+	
+		this.addBlock(shrunkenMatrix, topLeftCorner.x * this.blockSize, topLeftCorner.y * this.blockSize);
+	},
+	
+	_scanForSolutions: function(block) {
+		
+		var x = Math.floor(block.getPosition().x / this.blockSize);
+		var y = Math.floor(block.getPosition().y / this.blockSize);
+		
+		var blockOffset = block.getOffset();
+		
+		x += blockOffset.x;
+		y += blockOffset.y;
+						
+		console.log(['x: ', x, ' y: ', y].join(''));
+		
+		var occupationGrid = this.occupationGrid;
+		blocksInSolution = [];
+		
+		var scanLine = function (x, y) {
+			if (occupationGrid[y][x] == undefined) {
+				return null;
+			}
+						
+			var max = x;
+			while (occupationGrid[y][max] != undefined) {
+				blocksInSolution[occupationGrid[y][max]] = true;
+				max++;
+			}
+			
+			var min = x;
+			while (occupationGrid[y][min] != undefined) {
+				blocksInSolution[occupationGrid[y][min]] = true;
+				min--;
+			}
+			
+			return { min: min + 1, max: max - 1};
+		}
+		
+		var rangeIsEmpty = function (y, range) {
+			var nonEmpty = false;
+			for (var x = range.min; x < range.max; x++) {
+				nonEmpty = nonEmpty || (occupationGrid[y][x] != undefined);
+			}
+			return !nonEmpty;
+		}
+		
+		var baseRange = scanLine(x, y);
+		
+		if ((baseRange.max - baseRange.min + 1) % 2 != 0) {
+			return null;
+		}
+			
+		for (var _y = y; _y < this.gridHeight; _y++) {
+			var range = scanLine(x, _y);
+			
+			if (range == null && rangeIsEmpty(_y, baseRange)) {
+				break;
+			}
+				
+			if (range.min != baseRange.min || range.max != baseRange.max) {
+				return null;	
+			}
+		}
+		
+		for (var _y = y; _y > 0; _y--) {
+			var range = scanLine(x, _y);
+			
+			if (range == null && rangeIsEmpty(_y, baseRange)) {
+				break;
+			}
+				
+			if (range.min != baseRange.min || range.max != baseRange.max) {
+				return null;	
+			}
+		}
+		
+		return blocksInSolution;
+	},
+	
 	resize: function (width, height) {
-		//this.paper.setSize(width, height);
+		this.occupationGrid = [];
+		this.gridHeight = Math.ceil(height / this.blockSize);
+		this.gridWidth =  Math.ceil(width / this.blockSize);
+		
+		for (var i = 0; i < this.gridHeight; i++) {
+			this.occupationGrid[i] = new Array();
+		}
 	},
 		
-	addPiece: function (shape, x, y) {
+	addBlock: function (shape, x, y) {
 		var block = new Block(this.container, shape, this.blockSize);
 		block.setPosition(x, y);
 		this.pieces.push(block);
+		this._addToOccupationGrid(block);
 		
 		block.drag(this.grabbed.curry(block).bindScope(this),
 				   this.moved.curry(block).bindScope(this),
 				   this.released.curry(block).bindScope(this));
+				
+		return block;
 	},
 	
+	removeBlock: function (block) {
+		this._removeFromOccupationGrid(block);
+		delete this.pieces[this.pieces.indexOf(block)];
+		this.container.removeChild(block.canvas);
+	},
+		
 	grabbed: function (block) {
 		block.canvas.style.webkitTransition = '';
 		block.initialPosition = block.getPosition();
 		block.lastPosition = block.getPosition();
 		block.ddx = 0;
 		block.ddy = 0;
+		this._removeFromOccupationGrid(block);
 	},
 	
 	moved: function (block, dx, dy) {
@@ -211,8 +397,21 @@ Boxed.prototype = {
 		var correction = { x: 0, y: 0 };
 		correction.x += xoffset < blockSize / 2 ? -xoffset : (blockSize - xoffset);
 		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
+		
+		function whenAlignedToGrid() {
+			this._addToOccupationGrid(block);			
+			var blocks  = this._scanForSolutions(block);
+			console.log(blocks);
+			if (blocks) {
+				this._mergeBlocks(blocks);
+			}
+		}
 
-		block.setPositionAnimated(position.x + correction.x, position.y + correction.y);
+		block.setPositionAnimated(position.x + correction.x,
+								  position.y + correction.y,
+								  whenAlignedToGrid.bindScope(this));
+								
+							  	  
 	}
 	
 };
@@ -277,18 +476,8 @@ Block.prototype = {
 			return row ? row[x] : null;
 		}
 		
-		var findBlock = function(matrix) {
-			for (var i = 0; i < matrix.length; i++) {
-				for (var j = 0; j < matrix[i].length; j++) {
-					if (matrix[i][j]) {
-						return { x: j, y: i };
-					}
-				}
-			}
-		}
-
 		// find first active block	
-		var start = findBlock(matrix);
+		var start = this.getOffset();
 
 		var turns = 0;
 		var direction = {x: 1, y: 0 };
@@ -342,18 +531,28 @@ Block.prototype = {
 	_calculateSize: function(matrix, blockSize) {
 		return { width: matrix[0].length * blockSize, height: matrix.length * blockSize };
 	},
-	
+		
 	setPosition: function (x, y) {
 		this._x = x;
 		this._y = y;
 		this.canvas.style.webkitTransform = ['translate3d(', x, 'px,', y, 'px,', '0px)'].join('');
 	},
 	
-	setPositionAnimated: function (x, y) {
-		var style = this.canvas.style;
-		style.webkitTransition = "-webkit-transform 0.2s ease-in";
-		this.canvas.addEventListener('webkitTransitionEnd', function () { style.webkitTransition = ''; } );
-		this.setPosition(x, y);
+	setPositionAnimated: function (x, y, callback) {
+		
+		function transitionEnd() {
+			this.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+			this.style.webkitTransition = '';
+			if (callback) { callback(); };
+		}
+		
+		if (this.getPosition().x == x && this.getPosition().y == y) {
+			callback();
+		} else {
+			this.canvas.style.webkitTransition = "-webkit-transform 0.2s ease-in";
+			this.canvas.addEventListener('webkitTransitionEnd', transitionEnd, false);
+			this.setPosition(x, y);
+		}
 	},
 	
 	getPosition: function() {
@@ -362,6 +561,16 @@ Block.prototype = {
 	
 	getBBox: function() {
 		return { x: this._x, y: this._y, width: this._size.width, height: this._size.height };
+	},
+	
+	getOffset: function() {
+		for (var i = 0; i < this.matrix.length; i++) {
+			for (var j = 0; j < this.matrix[i].length; j++) {
+				if (this.matrix[i][j]) {
+					return { x: j, y: i };
+				}
+			}
+		}
 	},
 		
 	drag: function(grabbed, moved, released) {		
@@ -419,12 +628,12 @@ Block.prototype = {
 
 var Shapes = {
 	
-	L: [[1, 1, 1, 0],
-		[1, 0, 1, 0],
-		[1, 0, 0, 0],
-		[1, 0, 0, 0]],
+	L: [[1, 1, 1, 1],
+		[1, 0, 0, 1],
+		[1, 0, 0, 1],
+		[0, 0, 0, 0]],
 		
-	T: [[0, 1, 0, 0],
+	T: [[0, 0, 0, 0],
 		[0, 1, 1, 0],
 		[0, 1, 1, 0],
 		[1, 1, 1, 1]]
