@@ -128,6 +128,13 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	return resolution;
 }
 
+Transforms = {
+	
+	translate3d: function (x, y) {
+		return ['translate3d(', x, 'px,', y, 'px,', '0px)'].join('');
+	}
+}
+
 Number.prototype.mod = function(n) {
 	return ((this % n) + n) % n;
 }
@@ -154,6 +161,7 @@ function Boxed(containerElement) {
 	
 	this.addBlock(Shapes.L, 50, 50);
 	this.addBlock(Shapes.T, 100, 160);
+	this.addBlock(Shapes.R, 300, 160);
 }
 
 Boxed.prototype = {
@@ -235,20 +243,27 @@ Boxed.prototype = {
 			this.removeBlock(block);
 		}
 		
+		return this.addBlock(mergedMatrix, topLeftCorner.x * this.blockSize, topLeftCorner.y * this.blockSize);
+	},
+	
+	_shrinkBlock: function(block) {
+		var matrixHeight = block.matrix.length;
+		
 		var shrunkenMatrix = [];
 		for (var i = 0; i < matrixHeight / 2; i++) {
 			shrunkenMatrix[i] = new Array();
 		}
-				
-		for (var y in mergedMatrix) {
-			for (var x in mergedMatrix[y]) {
+
+		for (var y in block.matrix) {
+			for (var x in block.matrix[y]) {
 				if (!(x % 2 || y % 2)) {
 					shrunkenMatrix[y / 2][x / 2] = 1;
 				}
 			}
 		}
-	
-		this.addBlock(shrunkenMatrix, topLeftCorner.x * this.blockSize, topLeftCorner.y * this.blockSize);
+		
+		this.removeBlock(block);
+		this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
 	},
 	
 	_scanForSolutions: function(block) {
@@ -397,13 +412,22 @@ Boxed.prototype = {
 		var correction = { x: 0, y: 0 };
 		correction.x += xoffset < blockSize / 2 ? -xoffset : (blockSize - xoffset);
 		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
-		
+						
 		function whenAlignedToGrid() {
 			this._addToOccupationGrid(block);			
 			var blocks  = this._scanForSolutions(block);
 			console.log(blocks);
+						
 			if (blocks) {
-				this._mergeBlocks(blocks);
+				var merged = this._mergeBlocks(blocks);
+				var self = this;
+				
+				setTimeout(function() {
+					merged.canvas.style.webkitTransformOrigin = "left top";
+					merged.pushTransformAnimated('scale(0.5)', '1s ease-in', function () {
+						self._shrinkBlock(merged);
+					});
+				}, 100);
 			}
 		}
 
@@ -423,6 +447,7 @@ function Block(container, matrix, blockSize) {
 	this.canvas = container.appendChild(this._createCanvas(this._size.width, this._size.height));
 	this.ctx = this.canvas.getContext("2d");
 	this._render(this.ctx, matrix, blockSize);
+	this.transforms = ['translate3d(0,0)'];
 }
 
 Block.layerCount = 0;
@@ -532,29 +557,52 @@ Block.prototype = {
 		return { width: matrix[0].length * blockSize, height: matrix.length * blockSize };
 	},
 		
+	pushTransformAnimated: function (transform, transition, callback) {
+		
+		var transitionEnd = function () {
+			this.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+			if (callback) { callback(); };
+			console.log("animation ended");
+		}
+				
+		this.canvas.addEventListener('webkitTransitionEnd', transitionEnd, false);
+		this.canvas.style.webkitTransition = '-webkit-transform ' + transition;
+		this.transforms.push(transform);
+		this.canvas.style.webkitTransform = this.transforms.join(' ');
+		
+		console.log("animation began");
+	},
+		
+	pushTransform: function(transform) {
+		this.transforms.push(transform);
+		this.canvas.style.webkitTransform = this.transforms.join(' ');
+	},
+	
+	popTransform: function () {
+		this.transforms.pop();
+		this.canvas.style.webkitTransform = this.transforms.join(' ');
+	},
+	
 	setPosition: function (x, y) {
+		this.canvas.style.webkitTransition = '';
+		this.transforms = [];
+		this.pushTransform(Transforms.translate3d(x,y));
 		this._x = x;
 		this._y = y;
-		this.canvas.style.webkitTransform = ['translate3d(', x, 'px,', y, 'px,', '0px)'].join('');
 	},
 	
 	setPositionAnimated: function (x, y, callback) {
 		
-		function transitionEnd() {
-			this.removeEventListener('webkitTransitionEnd', transitionEnd, false);
-			this.style.webkitTransition = '';
-			if (callback) { callback(); };
-		}
-		
 		if (this.getPosition().x == x && this.getPosition().y == y) {
 			callback();
 		} else {
-			this.canvas.style.webkitTransition = "-webkit-transform 0.2s ease-in";
-			this.canvas.addEventListener('webkitTransitionEnd', transitionEnd, false);
-			this.setPosition(x, y);
+			this.transforms = [];
+			this.pushTransformAnimated(Transforms.translate3d(x, y), "0.2s ease-in", callback);
+			this._x = x;
+			this._y = y;
 		}
 	},
-	
+		
 	getPosition: function() {
 		return {x: this._x, y: this._y };
 	},
@@ -636,6 +684,11 @@ var Shapes = {
 	T: [[0, 0, 0, 0],
 		[0, 1, 1, 0],
 		[0, 1, 1, 0],
+		[1, 1, 1, 1]],
+		
+	R: [[0, 1, 0, 0],
+		[0, 1, 0, 0],
+		[0, 1, 0, 0],
 		[1, 1, 1, 1]]
 		
 }
