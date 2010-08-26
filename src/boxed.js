@@ -265,7 +265,7 @@ Boxed.prototype = {
 		}
 		
 		this.removeBlock(block);
-		this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
+		return this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
 	},
 	
 	_scanForSolutions: function(block) {
@@ -423,24 +423,28 @@ Boxed.prototype = {
 		var correction = { x: 0, y: 0 };
 		correction.x += xoffset < blockSize / 2 ? -xoffset : (blockSize - xoffset);
 		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
-						
-		function whenAlignedToGrid() {
-			this._addToOccupationGrid(block);			
-			var blocks  = this._scanForSolutions(block);
-			console.log(blocks);
-						
-			if (blocks) {
-				var merged = this._mergeBlocks(blocks);
-				var self = this;
+		
+		var self = this;
+		
+		function lookForSolution(block) {
+			var solution = self._scanForSolutions(block);
+			if (solution) {
+				var merged = self._mergeBlocks(solution);
 				
 				setTimeout(function() {
 					// wait until the canvas element is initialized
 					merged.canvas.style.webkitTransformOrigin = "left top";
-					merged.pushTransformAnimated('scale(0.5)', '1s ease-in', function () {
-						self._shrinkBlock(merged);
+					merged.pushTransformAnimated('scale(0.5)', '0.3s ease-in', function () {
+						var shrunken = self._shrinkBlock(merged);
+						lookForSolution(shrunken);
 					});
 				}, 100);
 			}
+		}
+						
+		function whenAlignedToGrid() {
+			this._addToOccupationGrid(block);
+			lookForSolution(block);
 		}
 
 		block.setPositionAnimated(position.x + correction.x,
