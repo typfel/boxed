@@ -161,9 +161,8 @@ function Boxed(containerElement) {
 	this.blockSize = 40;
 	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
-	this.addBlock(Shapes.L, 50, 50);
-	this.addBlock(Shapes.T, 100, 160);
-	this.addBlock(Shapes.R, 300, 160);
+	this.addBlock(Shapes[0], 50, 50);
+	this.addBlock(Shapes[1], 100, 160);
 }
 
 Boxed.prototype = {
@@ -381,6 +380,17 @@ Boxed.prototype = {
 		delete this.pieces[this.pieces.indexOf(block)];
 		this.container.removeChild(block.canvas);
 	},
+	
+	
+	spawnBlock: function() {
+		var randomShape = Shapes[Math.floor(Math.random() * Shapes.length)];
+		var randomGridHeight = Math.floor(Math.random() * this.gridHeight) * this.blockSize;
+		
+		var randomBlock = this.addBlock(randomShape, 0, randomGridHeight)
+		setTimeout(function() {
+			randomBlock.setPositionAnimated(100, randomGridHeight);
+		}, 100);
+	},
 		
 	grabbed: function (block) {
 		block.canvas.style.webkitTransition = '';
@@ -437,6 +447,7 @@ Boxed.prototype = {
 					merged.pushTransformAnimated('scale(0.5)', '0.3s ease-in', function () {
 						var shrunken = self._shrinkBlock(merged);
 						lookForSolution(shrunken);
+						self.spawnBlock();
 					});
 				}, 100);
 			}
@@ -687,21 +698,21 @@ Block.prototype = {
 	}	
 }
 
-var Shapes = {
+var Shapes = [
 	
-	L: [[1, 1, 1, 1],
-		[1, 0, 0, 1],
-		[1, 0, 0, 1],
-		[0, 0, 0, 0]],
+	[[1, 1, 1, 1],
+	 [1, 0, 0, 1],
+	 [1, 0, 0, 1],
+	 [0, 0, 0, 0]],
 		
-	T: [[0, 0, 0, 0],
-		[0, 1, 1, 0],
-		[0, 1, 1, 0],
-		[1, 1, 1, 1]],
+	[[0, 0, 0, 0],
+	 [0, 1, 1, 0],
+	 [0, 1, 1, 0],
+	 [1, 1, 1, 1]],
 		
-	R: [[0, 1, 0, 0],
-		[0, 1, 0, 0],
-		[0, 1, 0, 0],
-		[1, 1, 1, 1]]
+	[[0, 1, 0, 0],
+	 [0, 1, 0, 0],
+	 [0, 1, 0, 0],
+	 [1, 1, 1, 1]]
 		
-}
+];
