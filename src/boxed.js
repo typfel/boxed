@@ -37,13 +37,17 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	var rxoffset = blockSize - xoffset;
 	var ryoffset = blockSize - yoffset;
 		
-	var len = block1.matrix.length;
+	var width1 = block1.matrix[0].length;
+	var height1 = block1.matrix.length;
+	
+	var width2 = block2.matrix[0].length;
+	var height2 = block2.matrix.length;
 		
 	var m = xdelta / blockSize;
 	var n = ydelta / blockSize;
 		
 	function check(x, y) {
-		if (x >= 0 && x < len && y >= 0 && y < len) {
+		if (x >= 0 && x < width2 && y >= 0 && y < height2) {
 			return block2.matrix[y][x];
 		}
 		return 0;
@@ -51,11 +55,9 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	
 	var resolution = { x: 0, y: 0 };
 	var max = 0;
-	
-	//console.log("###");
-	
-	for (var i = 0; i < len; i++) {
-		for (var j = 0; j < len; j++) {
+		
+	for (var i = 0; i < width1; i++) {
+		for (var j = 0; j < height1; j++) {
 			
 			if (!block1.matrix[j][i]) {
 				continue;
@@ -403,7 +405,7 @@ Boxed.prototype = {
 			var piece = this.pieces[i];
 			
 			if (piece != block) {
-				if (boundingBoxTest(block.getBBox(), piece.getBBox())) {							
+				if (boundingBoxTest(block.getBBox(), piece.getBBox())) {
 					resolution = getBlockCollisionResolution(block, piece, this.blockSize);
 					block.setPosition(x + resolution.x, y + resolution.y);
 				}
