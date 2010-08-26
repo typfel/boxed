@@ -281,64 +281,73 @@ Boxed.prototype = {
 		var occupationGrid = this.occupationGrid;
 		blocksInSolution = [];
 		
-		var scanLine = function (x, y) {
+		var findRange = function (x, y) {
 			if (occupationGrid[y][x] == undefined) {
 				return null;
 			}
 						
 			var max = x;
-			while (occupationGrid[y][max] != undefined) {
-				blocksInSolution[occupationGrid[y][max]] = true;
+			while (occupationGrid[y][max+1] != undefined) {
+				blocksInSolution[occupationGrid[y][max+1]] = true;
 				max++;
 			}
 			
 			var min = x;
-			while (occupationGrid[y][min] != undefined) {
-				blocksInSolution[occupationGrid[y][min]] = true;
+			while (occupationGrid[y][min-1] != undefined) {
+				blocksInSolution[occupationGrid[y][min-1]] = true;
 				min--;
 			}
 			
-			return { min: min + 1, max: max - 1};
+			return { min: min, max: max};
 		}
 		
 		var rangeIsEmpty = function (y, range) {
 			var nonEmpty = false;
-			for (var x = range.min; x < range.max; x++) {
+			for (var x = range.min; x <= range.max; x++) {
 				nonEmpty = nonEmpty || (occupationGrid[y][x] != undefined);
 			}
 			return !nonEmpty;
 		}
 		
-		var baseRange = scanLine(x, y);
+		var scanLine = function(baseRange, x, y) {
+			var range = findRange(x, y);
+			
+			if (range == null) {
+				if (rangeIsEmpty(y, baseRange)) {
+					return 1
+				} else {
+					return -1;
+				}
+			} else if (range.min != baseRange.min || range.max != baseRange.max) {
+				return -1;	
+			} else {
+				return 0;
+			}
+		}
+		
+		var baseRange = findRange(x, y);
+		console.log(["baserange(", baseRange.min, ', ', baseRange.max, ')'].join(''));
 		
 		if ((baseRange.max - baseRange.min + 1) % 2 != 0) {
+			console.log("odd base range");
 			return null;
 		}
-			
-		for (var _y = y; _y < this.gridHeight; _y++) {
-			var range = scanLine(x, _y);
-			
-			if (range == null && rangeIsEmpty(_y, baseRange)) {
-				break;
-			}
-				
-			if (range.min != baseRange.min || range.max != baseRange.max) {
-				return null;	
-			}
+		
+		var _y = y + 1;
+		var valid;
+		while ((valid = scanLine(baseRange, x, _y)) == 0) {
+			_y++;
 		}
 		
-		for (var _y = y; _y > 0; _y--) {
-			var range = scanLine(x, _y);
-			
-			if (range == null && rangeIsEmpty(_y, baseRange)) {
-				break;
-			}
-				
-			if (range.min != baseRange.min || range.max != baseRange.max) {
-				return null;	
-			}
+		if (valid < 0) { return null; }
+		
+		_y = y - 1;
+		while ((valid = scanLine(baseRange, x, _y)) == 0) {
+			_y++;
 		}
 		
+		if (valid < 0) { return null; }
+					
 		return blocksInSolution;
 	},
 	
@@ -423,6 +432,7 @@ Boxed.prototype = {
 				var self = this;
 				
 				setTimeout(function() {
+					// wait until the canvas element is initialized
 					merged.canvas.style.webkitTransformOrigin = "left top";
 					merged.pushTransformAnimated('scale(0.5)', '1s ease-in', function () {
 						self._shrinkBlock(merged);
@@ -562,15 +572,12 @@ Block.prototype = {
 		var transitionEnd = function () {
 			this.removeEventListener('webkitTransitionEnd', transitionEnd, false);
 			if (callback) { callback(); };
-			console.log("animation ended");
 		}
 				
 		this.canvas.addEventListener('webkitTransitionEnd', transitionEnd, false);
 		this.canvas.style.webkitTransition = '-webkit-transform ' + transition;
 		this.transforms.push(transform);
 		this.canvas.style.webkitTransform = this.transforms.join(' ');
-		
-		console.log("animation began");
 	},
 		
 	pushTransform: function(transform) {
