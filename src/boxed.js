@@ -163,6 +163,7 @@ function Boxed(containerElement) {
 	
 	this.addBlock(Shapes[0], 50, 50);
 	this.addBlock(Shapes[1], 100, 160);
+	this.addBlock(Shapes[2], 200, 160);
 }
 
 Boxed.prototype = {
@@ -417,7 +418,7 @@ Boxed.prototype = {
 			if (piece != block) {
 				if (boundingBoxTest(block.getBBox(), piece.getBBox())) {
 					resolution = getBlockCollisionResolution(block, piece, this.blockSize);
-					block.setPosition(x + resolution.x, y + resolution.y);
+					block.setPosition(block.getPosition().x + resolution.x, block.getPosition().y + resolution.y);
 				}
 			}
 		}
@@ -710,9 +711,9 @@ var Shapes = [
 	 [0, 1, 1, 0],
 	 [1, 1, 1, 1]],
 		
-	[[0, 1, 0, 0],
-	 [0, 1, 0, 0],
-	 [0, 1, 0, 0],
+	[[1, 1, 0, 0],
+	 [1, 1, 0, 0],
+	 [1, 1, 1, 1],
 	 [1, 1, 1, 1]]
 		
 ];
