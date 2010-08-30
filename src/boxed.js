@@ -735,11 +735,13 @@ Block.prototype = {
 		var down = "mousedown";
 		var move = "mousemove";
 		var up = "mouseup";
+		var target = document;
 		
 		if (touchSupport) {
 			down = "touchstart";
 			move = "touchmove";
 			up = "touchend";
+			target = canvas;
 		}
 		
 		function _moved(event) {
@@ -757,8 +759,8 @@ Block.prototype = {
 		}
 		
 		function _released(event) {
-			document.removeEventListener(move, _moved, false);
-			document.removeEventListener(up, _released, false);
+			target.removeEventListener(move, _moved, false);
+			target.removeEventListener(up, _released, false);
 			released();
 		}
 		
@@ -774,8 +776,8 @@ Block.prototype = {
 				self._startY = event.pageY;
 			}
 			
-			document.addEventListener(move, _moved, false);
-			document.addEventListener(up, _released, false);			
+			target.addEventListener(move, _moved, false);
+			target.addEventListener(up, _released, false);
 		});
 	}	
 }
