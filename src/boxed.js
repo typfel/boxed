@@ -610,7 +610,11 @@ Block.prototype = {
 		var pointer = { x: position.x * blockSize, y: position.y * blockSize };
 		pointer = translate(pointer, { x: direction.x * blockSize, y: direction.y * blockSize });
 
-		ctx.fillStyle = "rgb(200,0,0)";
+		var r = Math.floor(Math.random() * 255);
+		var g = Math.floor(Math.random() * 255);
+		var b = Math.floor(Math.random() * 255);
+		
+		ctx.fillStyle = "rgb(" + [r ,g, b].join(',') + ")";
 		ctx.beginPath();
 		ctx.moveTo(pointer.x, pointer.y);
 		
