@@ -161,9 +161,9 @@ function Boxed(containerElement) {
 	this.blockSize = 40;
 	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
-	this.addBlock(Shapes[0], 50, 50);
-	this.addBlock(Shapes[1], 400, 160);
-	this.addBlock(Shapes[2], 200, 160);
+	this.spawnBlock();
+	this.spawnBlock();
+	this.spawnBlock();
 }
 
 Boxed.prototype = {
@@ -320,7 +320,7 @@ Boxed.prototype = {
 		blocksInSolution = [];
 		
 		var findRange = function (x, y) {
-			if (occupationGrid[y][x] == undefined) {
+			if (occupationGrid[y] == undefined || occupationGrid[y][x] == undefined) {
 				return null;
 			}
 						
@@ -371,20 +371,24 @@ Boxed.prototype = {
 			return null;
 		}
 		
-		var _y = y + 1;
+		var max = y;
 		var valid;
-		while ((valid = scanLine(baseRange, x, Math.min(_y, this.gridHeight))) == 0) {
-			_y++;
+		while ((valid = scanLine(baseRange, x, max)) == 0) {
+			max++;
 		}
 		
 		if (valid < 0) { return null; }
 		
-		_y = y - 1;
-		while ((valid = scanLine(baseRange, x, Math.max(_y, 0))) == 0) {
-			_y++;
+		var min = y;
+		while ((valid = scanLine(baseRange, x, min)) == 0) {
+			min--;
 		}
 		
 		if (valid < 0) { return null; }
+		
+		console.log("y diff: " + (max - min));
+		
+		if ((max - min - 2) % 2 == 0) { return null; }
 					
 		return blocksInSolution;
 	},
@@ -458,10 +462,11 @@ Boxed.prototype = {
 	
 	
 	spawnBlock: function() {
-		var randomShape = Shapes[Math.floor(Math.random() * Shapes.length)];
+		//var randomShape = Shapes[Math.floor(Math.random() * Shapes.length)];
+		var nextShape = Shapes[progress.shift()];
 		var randomGridHeight = Math.floor(Math.random() * this.gridHeight) * this.blockSize;
 		
-		var randomBlock = this.addBlock(randomShape, 0, randomGridHeight)
+		var randomBlock = this.addBlock(nextShape, 0, randomGridHeight)
 		setTimeout(function() {
 			randomBlock.setPositionAnimated(100, randomGridHeight);
 		}, 100);
@@ -775,21 +780,41 @@ Block.prototype = {
 	}	
 }
 
-var Shapes = [
+var Shapes = {
 	
-	[[1, 1, 1, 1],
-	 [1, 0, 0, 1],
-	 [1, 0, 0, 1],
-	 [0, 0, 0, 0]],
-		
-	[[0, 0, 0, 0],
+	tee:
+	[[0, 1, 1, 0],
 	 [0, 1, 1, 0],
-	 [0, 1, 1, 0],
-	 [1, 1, 1, 1]],
-		
-	[[1, 1, 0, 0],
-	 [1, 1, 0, 0],
 	 [1, 1, 1, 1],
-	 [1, 1, 1, 1]]
+	 [1, 1, 1, 1]],
+	
+	left_corner:	
+	[[1, 0, 0, 0],
+	 [1, 1, 0, 0],
+	 [1, 1, 1, 0],
+	 [1, 1, 1, 1]],
+	
+	right_corner:
+	[[0, 1, 1, 1],
+	 [0, 0, 1, 1],
+	 [0, 0, 0, 1],
+	 [0, 0, 0, 0]],
+	
+	diagonal:	
+	[[1, 0, 0, 0],
+	 [1, 1, 1, 0],
+	 [0, 0, 1, 0],
+	 [0, 0, 1, 1]],
+	
+	dot:	
+	[[1]],
+	
+	line:
+	[[1],
+	 [1],
+	 [1],
+	 [1]]
 		
-];
+};
+
+var progress = ["left_corner", "right_corner", "dot", "dot", "dot", "dot", "diagonal", "line", "line", "dot", "dot"];
