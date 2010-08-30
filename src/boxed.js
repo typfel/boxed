@@ -162,13 +162,13 @@ function Boxed(containerElement) {
 	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
 	this.addBlock(Shapes[0], 50, 50);
-	this.addBlock(Shapes[1], 100, 160);
+	this.addBlock(Shapes[1], 400, 160);
 	this.addBlock(Shapes[2], 200, 160);
 }
 
 Boxed.prototype = {
 	
-	_addToOccupationGrid: function(block) {
+	_addToOccupationGrid: function (block) {
 		var position = block.getPosition();
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
@@ -180,14 +180,21 @@ Boxed.prototype = {
 		
 		for (var i = 0; i < ylen; i++) {
 			for (var j = 0; j < xlen; j++) {
+				var xocc = x + j;
+				var yocc = y + i;
+				
+				if (xocc < 0 || xocc >= this.gridWidth || yocc < 0 || yocc >= this.gridHeight) {
+					continue; // out of bounds
+				}
+				
 				if (block.matrix[i][j]) {
-					this.occupationGrid[y + i][x + j] = blockIndex;
+					this.occupationGrid[yocc][xocc] = blockIndex;
 				}
 			}
 		}
 	},
 	
-	_removeFromOccupationGrid: function(block) {
+	_removeFromOccupationGrid: function (block) {
 		var position = block.getPosition();
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
@@ -201,6 +208,35 @@ Boxed.prototype = {
 					delete this.occupationGrid[y + i][x + j];
 				}
 			}
+		}
+	},
+	
+	_prepareOccupationGrid: function () {
+		this.occupationGrid = [];
+		
+		for (var i = 0; i < this.gridHeight; i++) {
+			this.occupationGrid[i] = new Array();
+		}
+		
+		for (var i in this.pieces) {
+			this._addToOccupationGrid(this.pieces[i]);
+		}
+	},
+	
+	_compressBlocks: function () {
+		var compressed = [];
+		
+		for (var i in this.pieces) {
+			var block = this.pieces[i];
+			this._removeFromOccupationGrid(block);
+			compressed.push(block);
+		}
+		
+		this.pieces = compressed;
+		
+		for (var i in this.pieces) {
+			var block = this.pieces[i];
+			this._addToOccupationGrid(block);
 		}
 	},
 	
@@ -337,20 +373,58 @@ Boxed.prototype = {
 		
 		var _y = y + 1;
 		var valid;
-		while ((valid = scanLine(baseRange, x, _y)) == 0) {
+		while ((valid = scanLine(baseRange, x, Math.min(_y, this.gridHeight))) == 0) {
 			_y++;
 		}
 		
 		if (valid < 0) { return null; }
 		
 		_y = y - 1;
-		while ((valid = scanLine(baseRange, x, _y)) == 0) {
+		while ((valid = scanLine(baseRange, x, Math.max(_y, 0))) == 0) {
 			_y++;
 		}
 		
 		if (valid < 0) { return null; }
 					
 		return blocksInSolution;
+	},
+	
+	_resolveConflicts: function (block) {
+		var position = block.getPosition();
+		
+		position.x = position.x < 0 ? 0 : position.x;
+		position.y = position.y < 0 ? 0 : position.y;
+		
+		block.setPosition(position.x, position.y);
+				
+		for (i in this.pieces) {
+			var anotherBlock = this.pieces[i];
+
+			if (block != anotherBlock) {
+				if (boundingBoxTest(block.getBBox(), anotherBlock.getBBox())) {
+					resolution = getBlockCollisionResolution(block, anotherBlock, this.blockSize);
+					if (resolution.x != 0 || resolution.y != 0) {
+						anotherBlock.setPosition(anotherBlock.getPosition().x - resolution.x, anotherBlock.getPosition().y - resolution.y);
+						this._resolveConflicts(anotherBlock);	
+					}
+				}
+			}
+		}
+	},
+	
+	_alignBlockToGrid: function (block, callback) {
+		var blockSize = this.blockSize
+		var position = block.getPosition();
+
+		var xoffset = position.x.mod(blockSize);
+		var yoffset = position.y.mod(blockSize);
+
+		var correction = { x: 0, y: 0 };
+		correction.x += xoffset < blockSize / 2 ? -xoffset : (blockSize - xoffset);
+		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
+			
+		block.setPositionAnimated(position.x + correction.x,
+								  position.y + correction.y, callback);
 	},
 	
 	resize: function (width, height) {
@@ -367,17 +441,17 @@ Boxed.prototype = {
 		var block = new Block(this.container, shape, this.blockSize);
 		block.setPosition(x, y);
 		this.pieces.push(block);
-		this._addToOccupationGrid(block);
 		
 		block.drag(this.grabbed.curry(block).bindScope(this),
 				   this.moved.curry(block).bindScope(this),
 				   this.released.curry(block).bindScope(this));
 				
+		this._alignBlockToGrid(block);
+				
 		return block;
 	},
 	
 	removeBlock: function (block) {
-		this._removeFromOccupationGrid(block);
 		delete this.pieces[this.pieces.indexOf(block)];
 		this.container.removeChild(block.canvas);
 	},
@@ -399,7 +473,6 @@ Boxed.prototype = {
 		block.lastPosition = block.getPosition();
 		block.ddx = 0;
 		block.ddy = 0;
-		this._removeFromOccupationGrid(block);
 	},
 	
 	moved: function (block, dx, dy) {
@@ -411,17 +484,7 @@ Boxed.prototype = {
 		block.ddx = dx;
 		block.ddy = dy;
 		block.setPosition(x, y);
-		
-		for (i in this.pieces) {
-			var piece = this.pieces[i];
-			
-			if (piece != block) {
-				if (boundingBoxTest(block.getBBox(), piece.getBBox())) {
-					resolution = getBlockCollisionResolution(block, piece, this.blockSize);
-					block.setPosition(block.getPosition().x + resolution.x, block.getPosition().y + resolution.y);
-				}
-			}
-		}
+		this._resolveConflicts(block);
 	},
 	
 	released: function (block) {
@@ -438,6 +501,8 @@ Boxed.prototype = {
 		var self = this;
 		
 		function lookForSolution(block) {
+			self._prepareOccupationGrid();
+			
 			var solution = self._scanForSolutions(block);
 			if (solution) {
 				var merged = self._mergeBlocks(solution);
@@ -448,6 +513,7 @@ Boxed.prototype = {
 					merged.pushTransformAnimated('scale(0.5)', '0.3s ease-in', function () {
 						var shrunken = self._shrinkBlock(merged);
 						lookForSolution(shrunken);
+						self._compressBlocks();
 						self.spawnBlock();
 					});
 				}, 100);
@@ -455,15 +521,21 @@ Boxed.prototype = {
 		}
 						
 		function whenAlignedToGrid() {
-			this._addToOccupationGrid(block);
 			lookForSolution(block);
 		}
-
-		block.setPositionAnimated(position.x + correction.x,
-								  position.y + correction.y,
-								  whenAlignedToGrid.bindScope(this));
-								
-							  	  
+		
+		
+		var blocks = this.pieces;
+		var alignedCounter = 0;
+		
+		for (var i in blocks) {
+			this._alignBlockToGrid(blocks[i], function () {
+				alignedCounter++;
+				if (alignedCounter == blocks.length) {
+					whenAlignedToGrid.bindScope(this)();
+				}
+			});
+		}							  	  
 	}
 	
 };
@@ -619,7 +691,7 @@ Block.prototype = {
 	setPositionAnimated: function (x, y, callback) {
 		
 		if (this.getPosition().x == x && this.getPosition().y == y) {
-			callback();
+			if (callback) { callback(); }
 		} else {
 			this.transforms = [];
 			this.pushTransformAnimated(Transforms.translate3d(x, y), "0.2s ease-in", callback);
