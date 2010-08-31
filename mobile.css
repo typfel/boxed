@@ -2,30 +2,17 @@ body {
 	position: absolute; 
 	height: 100%;
 	width: 100%;
-	min-width: 320px;
 	margin: 0px;
-}
-
-#title-bar {
-	height: 50px;
-}
-
-#title-bar #logo {
-	font-size: 45px;
-	font-weight: thin;
-	font-family: helvetica;
-	text-shadow: 1px 1px lightgray;
-	margin-left: 10px;
+	background: url(images/paper02.png);
 }
 
 #play-field {
-	position: absolute;
-	top: 50px;
 	bottom: 0px;
 	width: 320px;
+	height: 100%;
 	overflow: hidden;
 	margin: 0 auto;
-	border-top: 2px solid black
+	background: url(images/paper01.png);
 }
 
 .block {
