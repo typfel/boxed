@@ -158,7 +158,12 @@ Function.prototype.bindScope = function(scope) {
 function Boxed(containerElement) {
 	this.container = containerElement;
 	this.pieces = [];
-	this.blockSize = 40;
+	
+	if (containerElement.offsetWidth < 480) {
+		this.blockSize = 20;
+	} else {
+		this.blockSize = 40;
+	}
 	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
 	this.spawnBlock();
