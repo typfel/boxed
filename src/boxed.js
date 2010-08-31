@@ -392,7 +392,7 @@ Boxed.prototype = {
 					
 		return blocksInSolution;
 	},
-	
+		
 	_resolveConflicts: function (block) {
 		var position = block.getPosition();
 		
@@ -400,6 +400,7 @@ Boxed.prototype = {
 		position.y = position.y < 0 ? 0 : position.y;
 		
 		block.setPosition(position.x, position.y);
+		var queue = [];
 				
 		for (i in this.pieces) {
 			var anotherBlock = this.pieces[i];
@@ -409,10 +410,14 @@ Boxed.prototype = {
 					resolution = getBlockCollisionResolution(block, anotherBlock, this.blockSize);
 					if (resolution.x != 0 || resolution.y != 0) {
 						anotherBlock.setPosition(anotherBlock.getPosition().x - resolution.x, anotherBlock.getPosition().y - resolution.y);
-						this._resolveConflicts(anotherBlock);	
+						queue.push(anotherBlock);
 					}
 				}
 			}
+		}
+		
+		while (queue.length > 0) {
+			this._resolveConflicts(queue.shift());
 		}
 	},
 	
@@ -797,10 +802,9 @@ var Shapes = {
 	 [1, 1, 1, 1]],
 	
 	right_corner:
-	[[0, 1, 1, 1],
-	 [0, 0, 1, 1],
-	 [0, 0, 0, 1],
-	 [0, 0, 0, 0]],
+	[[1, 1, 1],
+	 [0, 1, 1],
+	 [0, 0, 1]],
 	
 	diagonal:	
 	[[1, 0, 0, 0],
