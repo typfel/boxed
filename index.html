@@ -3,18 +3,16 @@
 <html>
 	<head>
 		<title>Boxed!</title>
-		<meta name="viewport" content="width=device-width"/>
-		<link rel="stylesheet" href="desktop.css">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+		
+		<link rel="stylesheet" href="desktop.css" media="all and (min-device-width: 481px)">
+		<link rel="stylesheet" href="mobile.css" media="all and (max-device-width: 480px)">
 		
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
-		<div id="title-bar">
-				<span id="logo" class="tk-le-havre">Boxed!</span>
-				<div id="divider"></div>
-		</div>
 		<div id="play-field"></div>
-		
+				
 		<script type="text/javascript">
 			window.onload = function() {
 				boxed = new Boxed(document.getElementById("play-field"));
