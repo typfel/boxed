@@ -392,16 +392,24 @@ Boxed.prototype = {
 					
 		return blocksInSolution;
 	},
-		
-	_resolveConflicts: function (block) {
+	
+	_applyBorderConstraints: function (block) {
 		var position = block.getPosition();
+		var bbox = block.getBBox();
 		
 		position.x = position.x < 0 ? 0 : position.x;
 		position.y = position.y < 0 ? 0 : position.y;
 		
+		position.x = Math.min(position.x, this.container.offsetWidth - bbox.width);
+		position.y = Math.min(position.y, this.container.offsetHeight - bbox.height);
+		
 		block.setPosition(position.x, position.y);
-		var queue = [];
-				
+	},
+		
+	_resolveConflicts: function (block) {
+		this._applyBorderConstraints(block);
+
+		var queue = [];				
 		for (i in this.pieces) {
 			var anotherBlock = this.pieces[i];
 
