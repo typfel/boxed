@@ -164,11 +164,9 @@ function Boxed(containerElement) {
 	} else {
 		this.blockSize = 40;
 	}
-	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
 	
-	this.spawnBlock();
-	this.spawnBlock();
-	this.spawnBlock();
+	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
+	this.layoutBlocks(progress.slice(0, 7));
 }
 
 Boxed.prototype = {
@@ -245,7 +243,7 @@ Boxed.prototype = {
 		}
 	},
 	
-	_mergeBlocks: function (blocks) {		
+	_mergeBlocks: function (blocks) {
 		var mergedMatrix = [];
 		
 		var topLeftCorner = { x: this.gridWidth, y: this.gridHeight };
@@ -289,7 +287,7 @@ Boxed.prototype = {
 		return this.addBlock(mergedMatrix, topLeftCorner.x * this.blockSize, topLeftCorner.y * this.blockSize);
 	},
 	
-	_shrinkBlock: function(block) {
+	_shrinkBlock: function (block) {
 		var matrixHeight = block.matrix.length;
 		
 		var shrunkenMatrix = [];
@@ -309,7 +307,7 @@ Boxed.prototype = {
 		return this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
 	},
 	
-	_scanForSolutions: function(block) {
+	_scanForSolutions: function (block) {
 		
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
@@ -448,7 +446,7 @@ Boxed.prototype = {
 		block.setPositionAnimated(position.x + correction.x,
 								  position.y + correction.y, callback);
 	},
-	
+		
 	resize: function (width, height) {
 		this.occupationGrid = [];
 		this.gridHeight = Math.ceil(height / this.blockSize);
@@ -478,18 +476,28 @@ Boxed.prototype = {
 		this.container.removeChild(block.canvas);
 	},
 	
-	
-	spawnBlock: function() {
-		//var randomShape = Shapes[Math.floor(Math.random() * Shapes.length)];
-		var nextShape = Shapes[progress.shift()];
-		var randomGridHeight = Math.floor(Math.random() * this.gridHeight) * this.blockSize;
+	layoutBlocks: function(shapes) {
+		var x = 1;
+		var y = 1;
+		var rowHeight = 0;
 		
-		var randomBlock = this.addBlock(nextShape, 0, randomGridHeight)
-		setTimeout(function() {
-			randomBlock.setPositionAnimated(100, randomGridHeight);
-		}, 100);
+		while(shapes.length > 0) {
+			var shape = Shapes[shapes.pop()];
+			var width = shape[0].length;
+			var height = shape.length;
+			
+			if (x + width + 1> this.gridWidth) {
+				y += rowHeight + 1;
+				rowHeight = 0;
+				x = 1;
+			}
+			
+			this.addBlock(shape, x * this.blockSize, y * this.blockSize);
+			rowHeight = Math.max(rowHeight, height);
+			x += width + 1;
+		}
 	},
-		
+
 	grabbed: function (block) {
 		block.canvas.style.webkitTransition = '';
 		block.initialPosition = block.getPosition();
@@ -537,7 +545,6 @@ Boxed.prototype = {
 						var shrunken = self._shrinkBlock(merged);
 						lookForSolution(shrunken);
 						self._compressBlocks();
-						self.spawnBlock();
 					});
 				}, 100);
 			}
@@ -546,7 +553,6 @@ Boxed.prototype = {
 		function whenAlignedToGrid() {
 			lookForSolution(block);
 		}
-		
 		
 		var blocks = this.pieces;
 		var alignedCounter = 0;
@@ -564,6 +570,25 @@ Boxed.prototype = {
 };
 
 
+function Dock(containerElement, blockQueue) {
+	this.blockQueue = blockQueue;
+	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
+}
+
+Dock.prototype = {
+	
+	resize: function (width, height) {
+		this.width = width;
+		this.height = height;
+	},
+	
+	initialize: function () {
+		
+	}
+	
+}
+
+
 function Block(container, matrix, blockSize) {
 	this.matrix = matrix;
 	this._size = this._calculateSize(matrix, blockSize);
@@ -577,7 +602,7 @@ Block.layerCount = 0;
 
 Block.prototype = {
 	
-	_createCanvas: function (width, height) {		
+	_createCanvas: function (width, height) {
 		Block.layerCount += 1;
 		var canvas = document.createElement('canvas');
 		canvas.setAttribute('class', 'block');
@@ -731,11 +756,11 @@ Block.prototype = {
 		return {x: this._x, y: this._y };
 	},
 	
-	getBBox: function() {
+	getBBox: function () {
 		return { x: this._x, y: this._y, width: this._size.width, height: this._size.height };
 	},
 	
-	getOffset: function() {
+	getOffset: function () {
 		for (var i = 0; i < this.matrix.length; i++) {
 			for (var j = 0; j < this.matrix[i].length; j++) {
 				if (this.matrix[i][j]) {
@@ -745,7 +770,7 @@ Block.prototype = {
 		}
 	},
 		
-	drag: function(grabbed, moved, released) {		
+	drag: function (grabbed, moved, released) {
 		var canvas = this.canvas;
 		var self = this;
 		var touchSupport = "createTouch" in document;
