@@ -11,14 +11,14 @@
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
-		<div id="play-field"></div>
+		<div id="playfield"></div>
 				
 		<script type="text/javascript">
 			window.onload = function() {
-				boxed = new Boxed(document.getElementById("play-field"));
+				boxed = new Boxed(document.getElementById("playfield"));
 			}
 			window.onresize = function() {
-				var playField = document.getElementById("play-field");
+				var playField = document.getElementById("playfield");
 				boxed.resize(playField.offsetWidth, playField.offsetHeight);
 			}
 		</script>
