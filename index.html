@@ -2,20 +2,22 @@
 
 <html>
 	<head>
-		<title>Boxed!</title>
+		<title>All these boxes!</title>
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 		
 		<link rel="stylesheet" href="desktop.css" media="all and (min-device-width: 481px)">
 		<link rel="stylesheet" href="mobile.css" media="all and (max-device-width: 480px)">
 		
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
+		<div id="scoreboard"></div>
 		<div id="playfield"></div>
 				
 		<script type="text/javascript">
 			window.onload = function() {
-				boxed = new Boxed(document.getElementById("playfield"));
+				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
 			}
 			window.onresize = function() {
 				var playField = document.getElementById("playfield");

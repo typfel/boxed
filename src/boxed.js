@@ -155,17 +155,23 @@ Function.prototype.bindScope = function(scope) {
 	};
 }
 
-function Boxed(containerElement) {
-	this.container = containerElement;
+function Boxed(playfieldElement, scoreboardElement) {
+	this.container = playfieldElement;
+	this.scoreboard = scoreboardElement;
 	this.pieces = [];
 	
-	if (containerElement.offsetWidth < 480) {
+	this.score = 0;
+	this.base = 0;
+	this.multiplier = 1;
+	
+	if (this.container.offsetWidth < 480) {
 		this.blockSize = 20;
 	} else {
 		this.blockSize = 40;
 	}
-	
-	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
+
+	this._initializeScoring();
+	this.resize(this.container.offsetWidth, this.container.offsetHeight);
 	this.layoutBlocks(progress.slice(0, 7));
 }
 
@@ -447,6 +453,26 @@ Boxed.prototype = {
 								  position.y + correction.y, callback);
 	},
 		
+	_initializeScoring: function ()	{
+		$(this.scoreboard).append('<span class="score" id="score-total">0</span>');
+	},
+		
+	addScore: function (base, multiplier) {
+		var self = this;
+		var baseE = $(document.createElement('span')).addClass('score score-base').html(base);
+		var multiplierE = $(document.createElement('span')).addClass('score score-multiplier').html(multiplier);
+		
+		$(this.scoreboard).append(baseE);
+		$(this.scoreboard).append(multiplierE);
+		
+		setTimeout(function () {
+			baseE.remove();
+			multiplierE.remove();
+			self.score += base * multiplier
+			$('#score-total').html(self.score);
+		}, 1000);
+	},
+		
 	resize: function (width, height) {
 		this.occupationGrid = [];
 		this.gridHeight = Math.ceil(height / this.blockSize);
@@ -537,6 +563,7 @@ Boxed.prototype = {
 			var solution = self._scanForSolutions(block);
 			if (solution) {
 				var merged = self._mergeBlocks(solution);
+				self.addScore(200, 2);
 				
 				setTimeout(function() {
 					// wait until the canvas element is initialized
