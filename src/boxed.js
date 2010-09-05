@@ -182,8 +182,8 @@ Boxed.prototype = {
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
 		
-		var xlen = block.matrix.length;
-		var ylen = block.matrix[0].length;
+		var ylen = block.matrix.length;
+		var xlen = block.matrix[0].length;
 		
 		var blockIndex = this.pieces.indexOf(block);
 		
@@ -208,8 +208,8 @@ Boxed.prototype = {
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
 		
-		var xlen = block.matrix.length;
-		var ylen = block.matrix[0].length;
+		var ylen = block.matrix.length;
+		var xlen = block.matrix[0].length;
 		
 		for (var i = 0; i < ylen; i++) {
 			for (var j = 0; j < xlen; j++) {
@@ -322,82 +322,85 @@ Boxed.prototype = {
 		
 		x += blockOffset.x;
 		y += blockOffset.y;
-						
-		console.log(['x: ', x, ' y: ', y].join(''));
 		
+		var gridHeight = this.gridHeight;						
 		var occupationGrid = this.occupationGrid;
+
 		blocksInSolution = [];
 		
-		var findRange = function (x, y) {
-			if (occupationGrid[y] == undefined || occupationGrid[y][x] == undefined) {
-				return null;
-			}
-						
-			var max = x;
-			while (occupationGrid[y][max+1] != undefined) {
-				blocksInSolution[occupationGrid[y][max+1]] = true;
-				max++;
-			}
-			
-			var min = x;
-			while (occupationGrid[y][min-1] != undefined) {
-				blocksInSolution[occupationGrid[y][min-1]] = true;
-				min--;
-			}
-			
-			return { min: min, max: max};
+		function flatten(position) {
+			return position.y * gridHeight + position.x;
 		}
 		
-		var rangeIsEmpty = function (y, range) {
-			var nonEmpty = false;
-			for (var x = range.min; x <= range.max; x++) {
-				nonEmpty = nonEmpty || (occupationGrid[y][x] != undefined);
-			}
-			return !nonEmpty;
+		function findBoundingBox(bbox, visited, position) {
+			visited.push(flatten(position))
+			
+			if (occupationGrid[position.y] != undefined && occupationGrid[position.y][position.x] != undefined)
+				blocksInSolution[occupationGrid[position.y][position.x]] = true;
+			else
+				return;
+				
+			
+			bbox.min.x = Math.min(position.x, bbox.min.x);
+			bbox.min.y = Math.min(position.y, bbox.min.y);
+			bbox.max.x = Math.max(position.x, bbox.max.x);
+			bbox.max.y = Math.max(position.y, bbox.max.y);
+			
+			var up = { x: position.x, y: position.y - 1 };
+			var left = { x: position.x - 1, y: position.y };
+			var right = { x: position.x + 1, y: position.y };
+			var down = { x: position.x, y: position.y + 1 };
+			
+			if (visited.indexOf(flatten(up)) < 0)
+				findBoundingBox(bbox, visited, up);
+			if (visited.indexOf(flatten(left)) < 0)
+				findBoundingBox(bbox, visited, left);
+			if (visited.indexOf(flatten(right)) < 0)
+				findBoundingBox(bbox, visited, right);
+			if (visited.indexOf(flatten(down)) < 0)
+				findBoundingBox(bbox, visited, down);		
 		}
 		
-		var scanLine = function(baseRange, x, y) {
-			var range = findRange(x, y);
+		function scanRange(start, end, direction) {
+			var consecutive = 0;
+			var x = start.x;
+			var y = start.y;
 			
-			if (range == null) {
-				if (rangeIsEmpty(y, baseRange)) {
-					return 1
+			do {
+				if (blocksInSolution[occupationGrid[y][x]]) {
+					consecutive++;
 				} else {
-					return -1;
+					if (consecutive % 2 == 0)
+						consecutive = 0;
+					else
+						return false;
 				}
-			} else if (range.min != baseRange.min || range.max != baseRange.max) {
-				return -1;	
-			} else {
-				return 0;
-			}
+				
+				if (direction == 'horizontal')
+					x += 1;
+				else
+					y += 1;
+				
+			} while (x <= end.x && y <= end.y);
+			
+			return consecutive % 2 == 0;
+		}
+						
+		var bbox = { min: { x: x, y: y}, max: { x: x, y: y } };
+		findBoundingBox(bbox, [], bbox.min);
+		
+		var width = bbox.max.x - bbox.min.x;
+		var height = bbox.max.y - bbox.min.y;
+		
+		for (var y = 0; y <= height; y++) {
+			if (!scanRange({ x: bbox.min.x, y: bbox.min.y + y }, { x: bbox.max.x, y: bbox.min.y + y }, 'horizontal'))
+				return null
 		}
 		
-		var baseRange = findRange(x, y);
-		console.log(["baserange(", baseRange.min, ', ', baseRange.max, ')'].join(''));
-		
-		if ((baseRange.max - baseRange.min + 1) % 2 != 0) {
-			console.log("odd base range");
-			return null;
+		for (var x = 0; x <= width; x++) {
+			if (!scanRange({ x: bbox.min.x + x, y: bbox.min.y }, { x: bbox.min.x + x, y: bbox.max.y }, 'vertical'))
+				return null;
 		}
-		
-		var max = y;
-		var valid;
-		while ((valid = scanLine(baseRange, x, max)) == 0) {
-			max++;
-		}
-		
-		if (valid < 0) { return null; }
-		
-		var min = y;
-		while ((valid = scanLine(baseRange, x, min)) == 0) {
-			min--;
-		}
-		
-		if (valid < 0) { return null; }
-		
-		console.log("y diff: " + (max - min));
-		
-		if ((max - min - 2) % 2 == 0) { return null; }
 					
 		return blocksInSolution;
 	},
@@ -888,4 +891,4 @@ var Shapes = {
 		
 };
 
-var progress = ["left_corner", "right_corner", "dot", "dot", "dot", "dot", "diagonal", "line", "line", "dot", "dot"];
+var progress = ["left_corner", "right_corner", "line", "line", "dot", "dot", "diagonal", "line", "line", "dot", "dot"];
