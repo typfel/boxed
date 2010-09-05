@@ -315,31 +315,20 @@ Boxed.prototype = {
 	
 	_scanForSolutions: function (block) {
 		
-		var x = Math.floor(block.getPosition().x / this.blockSize);
-		var y = Math.floor(block.getPosition().y / this.blockSize);
-		
-		var blockOffset = block.getOffset();
-		
-		x += blockOffset.x;
-		y += blockOffset.y;
-		
-		var gridHeight = this.gridHeight;						
+		var gridHeight = this.gridHeight;
 		var occupationGrid = this.occupationGrid;
-
-		blocksInSolution = [];
-		
+				
 		function flatten(position) {
 			return position.y * gridHeight + position.x;
 		}
 		
-		function findBoundingBox(bbox, visited, position) {
+		function findBoundingBox(adjacents, bbox, visited, position) {
 			visited.push(flatten(position))
 			
 			if (occupationGrid[position.y] != undefined && occupationGrid[position.y][position.x] != undefined)
-				blocksInSolution[occupationGrid[position.y][position.x]] = true;
+				adjacents[occupationGrid[position.y][position.x]] = true;
 			else
 				return;
-				
 			
 			bbox.min.x = Math.min(position.x, bbox.min.x);
 			bbox.min.y = Math.min(position.y, bbox.min.y);
@@ -352,22 +341,22 @@ Boxed.prototype = {
 			var down = { x: position.x, y: position.y + 1 };
 			
 			if (visited.indexOf(flatten(up)) < 0)
-				findBoundingBox(bbox, visited, up);
+				findBoundingBox(adjacents, bbox, visited, up);
 			if (visited.indexOf(flatten(left)) < 0)
-				findBoundingBox(bbox, visited, left);
+				findBoundingBox(adjacents, bbox, visited, left);
 			if (visited.indexOf(flatten(right)) < 0)
-				findBoundingBox(bbox, visited, right);
+				findBoundingBox(adjacents, bbox, visited, right);
 			if (visited.indexOf(flatten(down)) < 0)
-				findBoundingBox(bbox, visited, down);		
+				findBoundingBox(adjacents, bbox, visited, down);		
 		}
 		
-		function scanRange(start, end, direction) {
+		function scanRange(blocks, start, end, direction) {
 			var consecutive = 0;
 			var x = start.x;
 			var y = start.y;
 			
 			do {
-				if (blocksInSolution[occupationGrid[y][x]]) {
+				if (blocks[occupationGrid[y][x]]) {
 					consecutive++;
 				} else {
 					if (consecutive % 2 == 0)
@@ -385,24 +374,52 @@ Boxed.prototype = {
 			
 			return consecutive % 2 == 0;
 		}
-						
-		var bbox = { min: { x: x, y: y}, max: { x: x, y: y } };
-		findBoundingBox(bbox, [], bbox.min);
 		
-		var width = bbox.max.x - bbox.min.x;
-		var height = bbox.max.y - bbox.min.y;
-		
-		for (var y = 0; y <= height; y++) {
-			if (!scanRange({ x: bbox.min.x, y: bbox.min.y + y }, { x: bbox.max.x, y: bbox.min.y + y }, 'horizontal'))
-				return null
+		function scanBoundingBox(blocks, bbox) {
+			var width = bbox.max.x - bbox.min.x;
+			var height = bbox.max.y - bbox.min.y;
+
+			for (var y = 0; y <= height; y++) {
+				if (!scanRange(blocks, { x: bbox.min.x, y: bbox.min.y + y }, { x: bbox.max.x, y: bbox.min.y + y }, 'horizontal'))
+					return false;
+			}
+
+			for (var x = 0; x <= width; x++) {
+				if (!scanRange(blocks, { x: bbox.min.x + x, y: bbox.min.y }, { x: bbox.min.x + x, y: bbox.max.y }, 'vertical'))
+					return false;
+			}
+			
+			return true;
 		}
 		
-		for (var x = 0; x <= width; x++) {
-			if (!scanRange({ x: bbox.min.x + x, y: bbox.min.y }, { x: bbox.min.x + x, y: bbox.max.y }, 'vertical'))
-				return null;
+		var solutions = [];
+		var queue = this.pieces.map(function (value, index) { return index; });
+
+		while(queue.length > 0) {
+			var block = this.pieces[queue.pop()];
+			var adjacentBlocks = [];
+			
+			var x = Math.floor(block.getPosition().x / this.blockSize);
+			var y = Math.floor(block.getPosition().y / this.blockSize);
+
+			var blockOffset = block.getOffset();
+
+			x += blockOffset.x;
+			y += blockOffset.y;
+			
+			var bbox = { min: { x: x, y: y}, max: { x: x, y: y } };
+			findBoundingBox(adjacentBlocks, bbox, [], bbox.min);
+			
+			queue = queue.filter(function (index) {
+				return adjacentBlocks[index] ? false : true;
+			});
+			
+			if (scanBoundingBox(adjacentBlocks, bbox)) {
+				solutions.push(adjacentBlocks);
+			}
 		}
-					
-		return blocksInSolution;
+							
+		return solutions;
 	},
 	
 	_applyBorderConstraints: function (block) {
@@ -563,8 +580,8 @@ Boxed.prototype = {
 		function lookForSolution(block) {
 			self._prepareOccupationGrid();
 			
-			var solution = self._scanForSolutions(block);
-			if (solution) {
+			var solutions = self._scanForSolutions(block);
+			solutions.forEach(function (solution) {
 				var merged = self._mergeBlocks(solution);
 				self.addScore(200, 2);
 				
@@ -577,7 +594,7 @@ Boxed.prototype = {
 						self._compressBlocks();
 					});
 				}, 100);
-			}
+			});
 		}
 						
 		function whenAlignedToGrid() {
