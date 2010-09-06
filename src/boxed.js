@@ -37,17 +37,14 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	var rxoffset = blockSize - xoffset;
 	var ryoffset = blockSize - yoffset;
 		
-	var width1 = block1.matrix[0].length;
-	var height1 = block1.matrix.length;
-	
-	var width2 = block2.matrix[0].length;
-	var height2 = block2.matrix.length;
-		
+	var size1 = block1.getSize();
+	var size2 = block2.getSize();
+			
 	var m = xdelta / blockSize;
 	var n = ydelta / blockSize;
 		
 	function check(x, y) {
-		if (x >= 0 && x < width2 && y >= 0 && y < height2) {
+		if (x >= 0 && x < size2.width && y >= 0 && y < size2.height) {
 			return block2.matrix[y][x];
 		}
 		return 0;
@@ -56,8 +53,8 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 	var resolution = { x: 0, y: 0 };
 	var max = 0;
 		
-	for (var i = 0; i < width1; i++) {
-		for (var j = 0; j < height1; j++) {
+	for (var i = 0; i < size1.width; i++) {
+		for (var j = 0; j < size1.height; j++) {
 			
 			if (!block1.matrix[j][i]) {
 				continue;
@@ -172,7 +169,7 @@ function Boxed(playfieldElement, scoreboardElement) {
 
 	this._initializeScoring();
 	this.resize(this.container.offsetWidth, this.container.offsetHeight);
-	this.layoutBlocks(progress.slice(0, 7));
+	this.layoutBlocks(progress);
 }
 
 Boxed.prototype = {
@@ -181,14 +178,12 @@ Boxed.prototype = {
 		var position = block.getPosition();
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
-		
-		var ylen = block.matrix.length;
-		var xlen = block.matrix[0].length;
-		
+				
+		var size = block.getSize();
 		var blockIndex = this.pieces.indexOf(block);
 		
-		for (var i = 0; i < ylen; i++) {
-			for (var j = 0; j < xlen; j++) {
+		for (var i = 0; i < size.height; i++) {
+			for (var j = 0; j < size.width; j++) {
 				var xocc = x + j;
 				var yocc = y + i;
 				
@@ -207,12 +202,11 @@ Boxed.prototype = {
 		var position = block.getPosition();
 		var x = Math.floor(block.getPosition().x / this.blockSize);
 		var y = Math.floor(block.getPosition().y / this.blockSize);
+				
+		var size = block.getSize();
 		
-		var ylen = block.matrix.length;
-		var xlen = block.matrix[0].length;
-		
-		for (var i = 0; i < ylen; i++) {
-			for (var j = 0; j < xlen; j++) {
+		for (var i = 0; i < size.height; i++) {
+			for (var j = 0; j < size.width; j++) {
 				if (block.matrix[i][j]) {
 					delete this.occupationGrid[y + i][x + j];
 				}
@@ -269,8 +263,10 @@ Boxed.prototype = {
 		}
 		
 		var matrixHeight = bottomRightCorner.y - topLeftCorner.y;
+		var matrixWidth = bottomRightCorner.x - topLeftCorner.x;
 		for (var i = 0; i < matrixHeight; i++) {
 			mergedMatrix[i] = new Array();
+			for (var j = 0; j < matrixWidth; j++) { mergedMatrix[i].push(0) };
 		}
 		
 		for (var i in blocks) {
@@ -304,7 +300,7 @@ Boxed.prototype = {
 		for (var y in block.matrix) {
 			for (var x in block.matrix[y]) {
 				if (!(x % 2 || y % 2)) {
-					shrunkenMatrix[y / 2][x / 2] = 1;
+					shrunkenMatrix[y / 2][x / 2] = block.matrix[y][x];
 				}
 			}
 		}
@@ -638,7 +634,8 @@ Dock.prototype = {
 
 function Block(container, matrix, blockSize) {
 	this.matrix = matrix;
-	this._size = this._calculateSize(matrix, blockSize);
+	this._matrixSize = this._calculateSize(matrix);
+	this._size = { width: this._matrixSize.width * blockSize, height: this._matrixSize.height * blockSize };
 	this.canvas = container.appendChild(this._createCanvas(this._size.width, this._size.height));
 	this.ctx = this.canvas.getContext("2d");
 	this._render(this.ctx, matrix, blockSize);
@@ -753,7 +750,8 @@ Block.prototype = {
 	},
 	
 	_calculateSize: function(matrix, blockSize) {
-		return { width: matrix[0].length * blockSize, height: matrix.length * blockSize };
+		var rows  = matrix.map(function (row) { return row.length }).reduce(function (prev, curr) { return Math.max(prev, curr) });
+		return { width:  rows, height: matrix.length };
 	},
 		
 	pushTransformAnimated: function (transform, transition, callback) {
@@ -805,6 +803,10 @@ Block.prototype = {
 	
 	getBBox: function () {
 		return { x: this._x, y: this._y, width: this._size.width, height: this._size.height };
+	},
+	
+	getSize: function () {
+		return { width: this._matrixSize.width, height: this._matrixSize.height };
 	},
 	
 	getOffset: function () {
@@ -874,33 +876,55 @@ Block.prototype = {
 
 var Shapes = {
 	
-	tee:
-	[[0, 1, 1, 0],
-	 [0, 1, 1, 0],
-	 [1, 1, 1, 1],
-	 [1, 1, 1, 1]],
+	hline:
+	[[1, 1, 1, 1]],
 	
-	left_corner:	
-	[[1, 0, 0, 0],
-	 [1, 1, 0, 0],
-	 [1, 1, 1, 0],
-	 [1, 1, 1, 1]],
+	el:	
+	[[1, 0],
+	 [1, 0],
+	 [1, 1]],
 	
-	right_corner:
+	le:	
+	[[1, 1],
+	 [0, 1],
+	 [0, 1]],
+	
+	hle:
+	[[1, 0, 0],
+	 [1, 1, 1]],
+	
+	hel:
 	[[1, 1, 1],
-	 [0, 1, 1],
 	 [0, 0, 1]],
 	
-	diagonal:	
-	[[1, 0, 0, 0],
-	 [1, 1, 1, 0],
-	 [0, 0, 1, 0],
-	 [0, 0, 1, 1]],
+	tee:
+	[[0, 1, 0],
+	 [1, 1, 1]],
+	
+	diag:	
+	[[1, 0, 0],
+	 [1, 1, 1],
+	 [0, 0, 1]],
 	
 	dot:	
 	[[1]],
 	
-	line:
+	hline2:
+	[[1,1]],
+	
+	vline2:
+	[[1],
+	 [1]],
+	
+	hline3:
+	[[1,1,1]],
+	
+	vline3:
+	[[1],
+	 [1],
+	 [1]],
+	
+	vline:
 	[[1],
 	 [1],
 	 [1],
@@ -908,4 +932,9 @@ var Shapes = {
 		
 };
 
-var progress = ["left_corner", "right_corner", "line", "line", "dot", "dot", "diagonal", "line", "line", "dot", "dot"];
+var puzzles = [
+	["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"],
+	["le", "hline", "hline3", "vline", "vline", "dot"]
+];
+
+var progress =  ["le", "hline", "hline3", "vline", "vline", "dot"];
