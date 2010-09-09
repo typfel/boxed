@@ -12,13 +12,61 @@
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
+		<div class="center-container">
+		<div class="center" id="puzzle-selection-dialog">
+			<a class="puzzle-selection-button" href="1">1</a>
+			<a class="puzzle-selection-button" href="2">2</a>
+			<a class="puzzle-selection-button" href="3">3</a>
+			<a class="puzzle-selection-button" href="4">4</a>
+			<a class="puzzle-selection-button" href="5">5</a>
+			<a class="puzzle-selection-button" href="6">6</a>
+			<a class="puzzle-selection-button" href="7">7</a>
+			<a class="puzzle-selection-button" href="8">8</a>
+			<a class="puzzle-selection-button" href="9">9</a>
+			<a class="puzzle-selection-button" href="1">10</a>
+			<a class="puzzle-selection-button" href="2">11</a>
+			<a class="puzzle-selection-button" href="3">12</a>
+			<a class="puzzle-selection-button" href="4">13</a>
+			<a class="puzzle-selection-button" href="5">14</a>
+			<a class="puzzle-selection-button" href="6">15</a>
+			<a class="puzzle-selection-button" href="1">16</a>
+			<a class="puzzle-selection-button" href="2">17</a>
+			<a class="puzzle-selection-button" href="3">18</a>
+			<a class="puzzle-selection-button" href="4">19</a>
+			<a class="puzzle-selection-button" href="5">20</a>
+			<a class="puzzle-selection-button" href="6">21</a>
+			<a class="puzzle-selection-button" href="1">22</a>
+			<a class="puzzle-selection-button" href="2">23</a>
+			<a class="puzzle-selection-button" href="3">24</a>
+			<a class="puzzle-selection-button" href="4">25</a>
+			<a class="puzzle-selection-button" href="5">26</a>
+			<a class="puzzle-selection-button" href="6">27</a>
+			<a class="puzzle-selection-button" href="1">28</a>
+			<a class="puzzle-selection-button" href="2">29</a>
+			<a class="puzzle-selection-button" href="3">30</a>
+			<a class="puzzle-selection-button" href="4">31</a>
+			<a class="puzzle-selection-button" href="5">32</a>
+			<a class="puzzle-selection-button" href="6">33</a>
+			<a class="puzzle-selection-button" href="4">34</a>
+			<a class="puzzle-selection-button" href="5">35</a>
+			<a class="puzzle-selection-button" href="6">36</a>
+		</div>
+		</div>
+		
 		<div id="scoreboard"></div>
 		<div id="playfield"></div>
 				
 		<script type="text/javascript">
-			window.onload = function() {
+			$(document).ready(function() {
 				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
-			}
+				
+				$('.puzzle-selection-button').click(function(event) {
+					event.preventDefault();
+					boxed.play($(this).attr('href'));
+					$('#puzzle-selection-dialog').hide();
+				});
+			});
+			
 			window.onresize = function() {
 				var playField = document.getElementById("playfield");
 				boxed.resize(playField.offsetWidth, playField.offsetHeight);

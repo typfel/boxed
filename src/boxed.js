@@ -169,7 +169,6 @@ function Boxed(playfieldElement, scoreboardElement) {
 
 	this._initializeScoring();
 	this.resize(this.container.offsetWidth, this.container.offsetHeight);
-	this.layoutBlocks(progress);
 }
 
 Boxed.prototype = {
@@ -309,7 +308,7 @@ Boxed.prototype = {
 		return this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
 	},
 	
-	_scanForSolutions: function (block) {
+	_scanForSolutions: function () {
 		
 		var gridHeight = this.gridHeight;
 		var occupationGrid = this.occupationGrid;
@@ -488,7 +487,7 @@ Boxed.prototype = {
 			$('#score-total').html(self.score);
 		}, 1000);
 	},
-		
+		 
 	resize: function (width, height) {
 		this.occupationGrid = [];
 		this.gridHeight = Math.ceil(height / this.blockSize);
@@ -523,10 +522,10 @@ Boxed.prototype = {
 		var y = 1;
 		var rowHeight = 0;
 		
-		while(shapes.length > 0) {
-			var shape = Shapes[shapes.pop()];
-			var width = shape[0].length;
-			var height = shape.length;
+		shapes.forEach(function (shape) {
+			var matrix = Shapes[shape];
+			var width = matrix[0].length;
+			var height = matrix.length;
 			
 			if (x + width + 1> this.gridWidth) {
 				y += rowHeight + 1;
@@ -534,10 +533,21 @@ Boxed.prototype = {
 				x = 1;
 			}
 			
-			this.addBlock(shape, x * this.blockSize, y * this.blockSize);
+			this.addBlock(matrix, x * this.blockSize, y * this.blockSize);
 			rowHeight = Math.max(rowHeight, height);
 			x += width + 1;
-		}
+		}, this);
+	},
+
+	play: function (puzzleIndex) {
+		console.log("playing " + puzzleIndex);
+		
+		this.pieces.forEach(function (block) {
+			this.removeBlock(block);
+		}, this);
+		
+		this.pieces = [];
+		this.layoutBlocks(puzzles[puzzleIndex-1]);
 	},
 
 	grabbed: function (block) {
@@ -572,11 +582,11 @@ Boxed.prototype = {
 		correction.y += yoffset < blockSize / 2 ? -yoffset : (blockSize - yoffset);
 		
 		var self = this;
-		
-		function lookForSolution(block) {
+								
+		function mergeAndShrinkSolutions() {
 			self._prepareOccupationGrid();
+			var solutions = self._scanForSolutions();
 			
-			var solutions = self._scanForSolutions(block);
 			solutions.forEach(function (solution) {
 				var merged = self._mergeBlocks(solution);
 				self.addScore(200, 2);
@@ -586,15 +596,17 @@ Boxed.prototype = {
 					merged.canvas.style.webkitTransformOrigin = "left top";
 					merged.pushTransformAnimated('scale(0.5)', '0.3s ease-in', function () {
 						var shrunken = self._shrinkBlock(merged);
-						lookForSolution(shrunken);
 						self._compressBlocks();
+						mergeAndShrinkSolutions();
 					});
 				}, 100);
 			});
-		}
-						
-		function whenAlignedToGrid() {
-			lookForSolution(block);
+			
+			if (self.pieces.length == 1) {
+				// puzzle is complete
+				console.log("puzzle solved!");
+				$('#puzzle-selection-dialog').show();
+			}
 		}
 		
 		var blocks = this.pieces;
@@ -604,14 +616,13 @@ Boxed.prototype = {
 			this._alignBlockToGrid(blocks[i], function () {
 				alignedCounter++;
 				if (alignedCounter == blocks.length) {
-					whenAlignedToGrid.bindScope(this)();
+					mergeAndShrinkSolutions();
 				}
 			});
 		}							  	  
 	}
 	
 };
-
 
 function Dock(containerElement, blockQueue) {
 	this.blockQueue = blockQueue;
