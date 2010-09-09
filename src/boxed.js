@@ -772,8 +772,7 @@ Block.prototype = {
 	},
 	
 	_calculateSize: function(matrix, blockSize) {
-		var rows  = matrix.map(function (row) { return row.length }).reduce(function (prev, curr) { return Math.max(prev, curr) });
-		return { width:  rows, height: matrix.length };
+		return { width:  matrix[0].length, height: matrix.length };
 	},
 		
 	pushTransformAnimated: function (transform, transition, callback) {
