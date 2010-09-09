@@ -1,0 +1,95 @@
+body {
+	position: absolute; 
+	height: 100%;
+	width: 100%;
+	margin: 0px;
+	background: url(images/paper02.png);
+}
+
+#playfield {
+	bottom: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+	background: url(images/paper01.png);
+}
+
+#scoreboard {
+	position: absolute;
+	display: none;
+	z-index: 9999;
+	left: 50px;
+	top: 20px;
+}
+
+.center-container {
+	position: absolute;
+	z-index: 9999;
+	width: 100%;
+	top: 50%;
+}
+
+.center {
+	position: relative;
+	margin: 0 auto;
+}
+
+#puzzle-selection-dialog {
+	bottom: 150px;
+	width: 300px;
+	height: 300px;
+	background: rgba(0, 0, 0, 1.0);
+	border: 5px solid gray;
+	border-radius: 5px;
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666666), to(#555555));
+	-webkit-transition: all 1s;
+}
+
+.puzzle-selection-button {
+	display: inline-block;
+	margin: 0px;
+	height: 48px;
+	width: 48px;
+	line-height: 48px;
+	float: left;
+	
+	font-size: 25px;
+	font-family: helvetica;
+	text-align: center;
+	text-decoration: none;
+	color: rgb(180, 180, 180);
+	text-shadow: -1px -1px black;
+	
+	border-right: 1px solid darkgray;
+	border-bottom: 1px solid darkgray;
+	border-top: 1px solid darkgray;
+	border-left: 1px solid darkgray;
+}
+
+.solved {
+	background: rgba(40, 150, 40, 0.5);
+	-webkit-transition: all 1s;
+}
+
+.score {
+	font-size: 60px;
+	font-family: helvetica;
+	color: white;
+	text-shadow: 2px 2px 4px black;
+	margin-right: 10px;
+}
+
+#dock {
+	position: absolute;
+	height: 100px;
+	width: 100%;
+	bottom: 0px;
+	border-top: 2px solid rgba(50, 50, 50, 0.4);
+	background: rgba(100, 100, 100, 0.2);
+}
+
+.block {
+	position: absolute;
+	-webkit-transform: translate3d(0, 0, 0);
+}
