@@ -3,3 +3,15 @@
 #playfield {
 	width: 320px;
 }
+
+.center-container {
+	top: 0%;
+}
+
+#puzzle-selection-dialog {
+	top: 25px;
+}
+
+body {
+	overflow: hide;
+}
