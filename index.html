@@ -59,12 +59,7 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
-				
-				$('.puzzle-selection-button').click(function(event) {
-					event.preventDefault();
-					boxed.play($(this).attr('href'));
-					$('#puzzle-selection-dialog').hide();
-				});
+				progress = new ProgressRecorder(document.getElementById("puzzle-selection-dialog"), boxed);
 			});
 			
 			window.onresize = function() {

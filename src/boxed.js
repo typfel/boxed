@@ -550,6 +550,10 @@ Boxed.prototype = {
 		this.layoutBlocks(puzzles[puzzleIndex-1]);
 	},
 
+	solved: function (callback) {
+		$(this).bind('boxed.solved', callback);
+	},
+
 	grabbed: function (block) {
 		block.canvas.style.webkitTransition = '';
 		block.initialPosition = block.getPosition();
@@ -605,7 +609,7 @@ Boxed.prototype = {
 			if (self.pieces.length == 1) {
 				// puzzle is complete
 				console.log("puzzle solved!");
-				$('#puzzle-selection-dialog').show();
+				$(self).trigger('boxed.solved');
 			}
 		}
 		
@@ -624,24 +628,31 @@ Boxed.prototype = {
 	
 };
 
-function Dock(containerElement, blockQueue) {
-	this.blockQueue = blockQueue;
-	this.resize(containerElement.offsetWidth, containerElement.offsetHeight);
+function ProgressRecorder(dialog, boxed) {
+	this.dialog = dialog;
+	this.boxed = boxed;
+	
+	var puzzle;
+	
+	$(dialog).find('.puzzle-selection-button').each(function () {
+		if (localStorage.getItem($(this).attr('href'))) {
+			$(this).addClass("solved");
+		}
+	})
+	
+	$(dialog).find('.puzzle-selection-button').click(function(event) {
+		event.preventDefault();
+		puzzle = $(this).attr('href');
+		boxed.play(puzzle);
+		$(dialog).hide();
+	});
+	
+	boxed.solved(function () {
+		$(dialog).find('.puzzle-selection-button[href=' + puzzle + ']').addClass("solved");
+		$(dialog).show();
+		localStorage.setItem(puzzle, true);
+	});
 }
-
-Dock.prototype = {
-	
-	resize: function (width, height) {
-		this.width = width;
-		this.height = height;
-	},
-	
-	initialize: function () {
-		
-	}
-	
-}
-
 
 function Block(container, matrix, blockSize) {
 	this.matrix = matrix;
