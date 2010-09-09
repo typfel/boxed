@@ -901,33 +901,77 @@ var Shapes = {
 	hline:
 	[[1, 1, 1, 1]],
 	
-	el:	
+	knight1:	
 	[[1, 0],
 	 [1, 0],
 	 [1, 1]],
 	
-	le:	
+	knight2:	
+	[[1, 1, 1],
+	 [1, 0, 0]],
+	
+	knight3:	
 	[[1, 1],
 	 [0, 1],
 	 [0, 1]],
 	
+	knight4:	
+	[[0, 0, 1],
+	 [1, 1, 1]],
+	
+	knight1f:	
+	[[0, 1],
+	 [0, 1],
+	 [1, 1]],
+
+	knight2f:	
+	[[1, 0, 0],
+	 [1, 1, 1]],
+
+	knight3f:	
+	[[1, 1],
+	 [1, 0],
+	 [1, 0]],
+
+	knight4f:	
+	[[1, 1, 1],
+	 [0, 0, 1]],
+		
 	hle:
 	[[1, 0, 0],
 	 [1, 1, 1]],
+	
+	fhle:
+	[[1, 1, 1],
+	 [1, 0, 0]],
 	
 	hel:
 	[[1, 1, 1],
 	 [0, 0, 1]],
 	
+	fhel:
+	[[0, 0, 1],
+	 [1, 1, 1]],
+	
 	tee:
 	[[0, 1, 0],
 	 [1, 1, 1]],
 	
-	diag:	
+	diag1:	
 	[[1, 0, 0],
-	 [1, 1, 1],
-	 [0, 0, 1]],
+	 [1, 0, 0],
+	 [1, 1, 1]],
 	
+	diag2:	
+	[[1, 1, 1],
+	 [1, 0, 0],
+	 [1, 0, 0]],
+	
+	diag3:	
+	[[1, 1, 1],
+	 [0, 0, 1],
+	 [0, 0, 1]],
+		
 	dot:	
 	[[1]],
 	
@@ -955,8 +999,13 @@ var Shapes = {
 };
 
 var puzzles = [
+	["knight1", "knight3"],
+	["vline", "knight1", "knight4"],
+	["knight1", "vline", "vline"],
+	["tee", "vline", "hline", "vline", "knight3", "knight3f", "hline", "vline3"],
+	["knight3", "knight4", "knight1f", "knight4f"],
+	["dot", "knight1", "knight1", "knight3", "knight4", "knight1", "knight3"],
 	["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"],
-	["le", "hline", "hline3", "vline", "vline", "dot"]
+	["knight1", "hline", "hline3", "vline", "vline", "dot"],
+	["tee", "hline2", "tee", "dot", "dot"]
 ];
-
-var progress =  ["le", "hline", "hline3", "vline", "vline", "dot"];
