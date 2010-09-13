@@ -655,10 +655,11 @@ function ProgressRecorder(dialog, boxed) {
 }
 
 function Block(container, matrix, blockSize) {
+	this.lineWidth = 2;
 	this.matrix = matrix;
 	this._matrixSize = this._calculateSize(matrix);
 	this._size = { width: this._matrixSize.width * blockSize, height: this._matrixSize.height * blockSize };
-	this.canvas = container.appendChild(this._createCanvas(this._size.width, this._size.height));
+	this.canvas = container.appendChild(this._createCanvas(this._size.width + this.lineWidth, this._size.height + this.lineWidth));
 	this.ctx = this.canvas.getContext("2d");
 	this._render(this.ctx, matrix, blockSize);
 	this.transforms = ['translate3d(0,0)'];
@@ -714,7 +715,7 @@ Block.prototype = {
 			var row = matrix[y];
 			return row ? row[x] : null;
 		}
-		
+		      
 		// find first active block	
 		var start = this.getOffset();
 
@@ -724,11 +725,15 @@ Block.prototype = {
 		var pointer = { x: position.x * blockSize, y: position.y * blockSize };
 		pointer = translate(pointer, { x: direction.x * blockSize, y: direction.y * blockSize });
 
-		var r = Math.floor(Math.random() * 255);
-		var g = Math.floor(Math.random() * 255);
-		var b = Math.floor(Math.random() * 255);
-		
+		var r = Math.floor(25 + Math.random() * 200);
+		var g = Math.floor(25 + Math.random() * 200);
+		var b = Math.floor(25 + Math.random() * 200);
+				
 		ctx.fillStyle = "rgb(" + [r ,g, b].join(',') + ")";
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = this.lineWidth;
+		ctx.lineCap = 'round';
+		ctx.translate(ctx.lineWidth / 2, ctx.lineWidth / 2);
 		ctx.beginPath();
 		ctx.moveTo(pointer.x, pointer.y);
 		
@@ -769,6 +774,7 @@ Block.prototype = {
 
 		ctx.closePath();
 		ctx.fill();
+		ctx.stroke();
 	},
 	
 	_calculateSize: function(matrix, blockSize) {
