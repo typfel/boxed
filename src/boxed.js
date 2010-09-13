@@ -547,7 +547,13 @@ Boxed.prototype = {
 		}, this);
 		
 		this.pieces = [];
-		this.layoutBlocks(puzzles[puzzleIndex-1]);
+		this.layoutBlocks(puzzles[puzzleIndex-1].puzzle);
+		$('#message').html(puzzles[puzzleIndex-1].tip);
+		$('#message').toggleClass('hidden-message', false);
+		
+		setTimeout(function () {
+			$('#message').toggleClass('hidden-message', true);
+		}, 10000);
 	},
 
 	solved: function (callback) {
@@ -1013,13 +1019,36 @@ var Shapes = {
 };
 
 var puzzles = [
-	["knight1", "knight3"],
-	["vline", "knight1", "knight4"],
-	["knight1", "vline", "vline"],
-	["tee", "vline", "hline", "vline", "knight3", "knight3f", "hline", "vline3"],
-	["knight3", "knight4", "knight1f", "knight4f"],
-	["dot", "knight1", "knight1", "knight3", "knight4", "knight1", "knight3"],
-	["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"],
-	["knight1", "hline", "hline3", "vline", "vline", "dot"],
-	["tee", "hline2", "tee", "dot", "dot"]
+	{
+		tip: "The puzzle is solved when only one block remains",
+		puzzle: ["knight1", "knight3"]
+	},
+	{
+		tip: "meh meh",
+		puzzle: ["vline", "knight1", "knight4"]
+	},
+	{
+		tip: "blocks grouped together can merge into a smaller version of itself",
+		puzzle: ["tee", "vline", "hline", "vline", "knight3", "knight3f", "hline", "vline3"]
+	},
+	{
+		tip: "galet",
+		puzzle:	["knight3", "knight4", "knight1f", "knight4f"]
+	},
+	{
+		tip: "blocks only merge when they form a block which can be shrunken",
+		puzzle: ["dot", "knight1", "knight1", "knight3", "knight4", "knight1", "knight3"]
+	},
+	{
+		tip: "getting harder",
+		puzzle: ["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"]
+	},
+	{
+		tip: "wazza what?!",
+		puzzle: ["knight1", "hline", "hline3", "vline", "vline", "dot"],
+	},
+	{
+		tip: "Easy peasy",
+		puzzle: ["tee", "hline2", "tee", "dot", "dot"]
+	}
 ];

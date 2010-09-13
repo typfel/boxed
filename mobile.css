@@ -12,6 +12,10 @@
 	top: 25px;
 }
 
+#message {
+	font-size: 25px;
+}
+
 body {
 	overflow: hide;
 }

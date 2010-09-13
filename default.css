@@ -81,13 +81,20 @@ body {
 	margin-right: 10px;
 }
 
-#dock {
+#message {
 	position: absolute;
 	height: 100px;
 	width: 100%;
 	bottom: 0px;
 	border-top: 2px solid rgba(50, 50, 50, 0.4);
 	background: rgba(100, 100, 100, 0.2);
+	font-size: 40px;
+	text-align: center;
+	-webkit-transition: all 1s;
+}
+
+.hidden-message {
+	-webkit-transform: translate3d(0px, 102px, 0px);
 }
 
 .block {
