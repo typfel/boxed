@@ -166,6 +166,10 @@ function Boxed(playfieldElement, scoreboardElement) {
 	} else {
 		this.blockSize = 40;
 	}
+	
+	this.container.ontouchmove = function (event) {
+		event.preventDefault();
+	}
 
 	this._initializeScoring();
 	this.resize(this.container.offsetWidth, this.container.offsetHeight);
