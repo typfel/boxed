@@ -728,9 +728,9 @@ Block.prototype = {
 		if (color) {
 			this.color = color;
 		} else {
-			var r = Math.floor(25 + Math.random() * 200);
-			var g = Math.floor(25 + Math.random() * 200);
-			var b = Math.floor(25 + Math.random() * 200);
+			var r = Math.floor(50 + Math.random() * 200);
+			var g = Math.floor(50 + Math.random() * 200);
+			var b = Math.floor(50 + Math.random() * 200);
 			this.color = "rgb(" + [r ,g, b].join(',') + ")";
 		}
 
