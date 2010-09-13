@@ -305,7 +305,7 @@ Boxed.prototype = {
 		}
 		
 		this.removeBlock(block);
-		return this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y);
+		return this.addBlock(shrunkenMatrix, block.getPosition().x, block.getPosition().y, block.getColor());
 	},
 	
 	_scanForSolutions: function () {
@@ -498,8 +498,8 @@ Boxed.prototype = {
 		}
 	},
 		
-	addBlock: function (shape, x, y) {
-		var block = new Block(this.container, shape, this.blockSize);
+	addBlock: function (shape, x, y, color) {
+		var block = new Block(this.container, shape, this.blockSize, color);
 		block.setPosition(x, y);
 		this.pieces.push(block);
 		
@@ -654,14 +654,14 @@ function ProgressRecorder(dialog, boxed) {
 	});
 }
 
-function Block(container, matrix, blockSize) {
+function Block(container, matrix, blockSize, color) {
 	this.lineWidth = 2;
 	this.matrix = matrix;
 	this._matrixSize = this._calculateSize(matrix);
 	this._size = { width: this._matrixSize.width * blockSize, height: this._matrixSize.height * blockSize };
 	this.canvas = container.appendChild(this._createCanvas(this._size.width + this.lineWidth, this._size.height + this.lineWidth));
 	this.ctx = this.canvas.getContext("2d");
-	this._render(this.ctx, matrix, blockSize);
+	this._render(this.ctx, matrix, blockSize, color);
 	this.transforms = ['translate3d(0,0)'];
 }
 
@@ -679,7 +679,7 @@ Block.prototype = {
 		return canvas;
 	},
 	
-	_render: function (ctx, matrix, blockSize) {
+	_render: function (ctx, matrix, blockSize, color) {
 		var lookup = [
 			{ x:  1, y:  0 },
 			{ x:  0, y:  1 },
@@ -725,11 +725,16 @@ Block.prototype = {
 		var pointer = { x: position.x * blockSize, y: position.y * blockSize };
 		pointer = translate(pointer, { x: direction.x * blockSize, y: direction.y * blockSize });
 
-		var r = Math.floor(25 + Math.random() * 200);
-		var g = Math.floor(25 + Math.random() * 200);
-		var b = Math.floor(25 + Math.random() * 200);
-				
-		ctx.fillStyle = "rgb(" + [r ,g, b].join(',') + ")";
+		if (color) {
+			this.color = color;
+		} else {
+			var r = Math.floor(25 + Math.random() * 200);
+			var g = Math.floor(25 + Math.random() * 200);
+			var b = Math.floor(25 + Math.random() * 200);
+			this.color = "rgb(" + [r ,g, b].join(',') + ")";
+		}
+
+		ctx.fillStyle = this.color;
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = this.lineWidth;
 		ctx.lineCap = 'round';
@@ -844,6 +849,10 @@ Block.prototype = {
 				}
 			}
 		}
+	},
+	
+	getColor: function () {
+		return this.color;
 	},
 		
 	drag: function (grabbed, moved, released) {
