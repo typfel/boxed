@@ -940,12 +940,11 @@ Boxed.prototype = {
 		
 		this.pieces = [];
 		this.layoutBlocks(puzzles[puzzleIndex-1].puzzle);
-		$('#message').html(puzzles[puzzleIndex-1].tip);
-		$('#message').toggleClass('hidden-message', false);
-		
-		setTimeout(function () {
-			$('#message').toggleClass('hidden-message', true);
-		}, 10000);
+		$(this).trigger('boxed.began', [puzzles[puzzleIndex-1]]);
+	},
+	
+	began: function (callback) {
+		$(this).bind('boxed.began', callback);
 	},
 
 	solved: function (callback) {
@@ -1047,5 +1046,23 @@ function ProgressRecorder(dialog, boxed) {
 		$(dialog).find('.puzzle-selection-button[href=' + puzzle + ']').addClass("solved");
 		$(dialog).show();
 		localStorage.setItem(puzzle, true);
+	});
+}
+
+function PuzzleTipster(dialog, boxed) {
+	var toggleMessageTimer;
+	
+	boxed.began(function (event, puzzle) {		
+		$(dialog).find('#message').html(puzzle.tip);
+		$(dialog).toggleClass('message-hidden', false);
+		
+		toggleMessageTimer = setTimeout(function () {
+			$(dialog).toggleClass('message-hidden', true);
+		}, 10000);
+	});
+	
+	boxed.solved(function () {
+		clearTimeout(toggleMessageTimer);
+		$(dialog).toggleClass('message-hidden', true);
 	});
 }

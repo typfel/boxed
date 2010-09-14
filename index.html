@@ -55,14 +55,15 @@
 		
 		<div id="scoreboard"></div>
 		<div id="playfield"></div>
-		<div id="message" class="hidden-message">
-			Puzzle tip goes here.
+		<div id="message-container" class="message-hidden">
+			<div id="message">Puzzle tip goes here.</div>
 		</div>
 				
 		<script type="text/javascript">
 			$(document).ready(function() {
 				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
 				progress = new ProgressRecorder(document.getElementById("puzzle-selection-dialog"), boxed);
+				tipster = new PuzzleTipster($("#message-container"), boxed);
 			});
 			
 			window.onresize = function() {
