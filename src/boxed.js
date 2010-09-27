@@ -566,7 +566,7 @@ function Boxed(playfieldElement, scoreboardElement) {
 	};
 
 	this._initializeScoring();
-	this.resize(this.container.offsetWidth, this.container.offsetHeight);
+	this.resize($(this.container).width(), $(this.container).height());
 }
 
 Boxed.prototype = {
@@ -819,8 +819,8 @@ Boxed.prototype = {
 		position.x = position.x < 0 ? 0 : position.x;
 		position.y = position.y < 0 ? 0 : position.y;
 		
-		position.x = Math.min(position.x, this.container.offsetWidth - bbox.width);
-		position.y = Math.min(position.y, this.container.offsetHeight - bbox.height);
+		position.x = Math.min(position.x, this.containerWidth - bbox.width);
+		position.y = Math.min(position.y, this.containerHeight - bbox.height);
 		
 		block.setPosition(position.x, position.y);
 	},
@@ -883,7 +883,11 @@ Boxed.prototype = {
 	},
 		 
 	resize: function (width, height) {
+		console.log("width: " + width + " heigth: " + height);
+		
 		this.occupationGrid = [];
+		this.containerWidth = width;
+		this.containerHeight = height;
 		this.gridHeight = Math.ceil(height / this.blockSize);
 		this.gridWidth =  Math.ceil(width / this.blockSize);
 		
