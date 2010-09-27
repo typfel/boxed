@@ -92,18 +92,78 @@ var Shapes = {
 	 [1],
 	 [1]],
 	
+	hline5:
+	[[1,1,1,1,1]],
+
+	vline5:
+	[[1],
+	 [1],
+	 [1],
+	 [1],
+	 [1]],
+	
 	vline:
 	[[1],
 	 [1],
 	 [1],
-	 [1]]
-		
+	 [1]],
+	
+	cross:
+	[[0,1,0],
+	 [1,1,1],
+	 [0,1,0]],
+	
+	corner1:
+	[[1,0],
+	 [1,1]],
+	
+	corner2:
+	[[1,1],
+	 [1,0]],
+	
+	corner3:
+	[[1,1],
+	 [0,1]],
+	
+	corner4:
+	[[0,1],
+	 [1,1]],
+	
+	box3:
+	[[1,1,1],
+	 [1,1,1],
+	 [1,1,1]]
+	
 };
 
 var puzzles = [
 	{
 		tip: "The puzzle is solved when only one block remains",
 		puzzle: ["knight1", "knight3"]
+	},
+	{
+		tip: "Say Cheese!",
+		puzzle: ["vline5", "vline5", "hline5", "hline5", "vline3", "vline3", "hline3", "hline3"]
+	},
+	{
+		tip: "Ompa lompa",
+		puzzle: ["corner1", "vline3", "cross", "hline3", "corner3"]
+	},
+	{
+		tip: "A box with three unit sides can't be shrunken.",
+		puzzle: ["box3", "vline3", "hline"]
+	},
+	{
+		tip: "Write something clever here",
+		puzzle: ["box3", "box3", "vline3", "vline3", "hline2", "hline2"]
+	},
+	{
+		tip: "The weakest link",
+		puzzle: ["corner1", "corner2", "corner3", "corner4", "dot"]
+	},
+	{
+		tip: "Grrr no more",
+		puzzle: ["knight1f", "knight1", "knight2f", "knight4", "vline2", "vline2"]
 	},
 	{
 		tip: "Meh meh meh",
