@@ -45,39 +45,47 @@ body {
 
 #puzzle-selection-dialog {
 	bottom: 150px;
-	width: 300px;
-	height: 300px;
+	width: 298px;
+	height: 298px;
 	-webkit-background-clip: padding;
 	border: 5px;
-	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;
-	-webkit-transition: all 1s;
+	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;;
 }
 
 @font-face { font-family: PCSenior; src: url('pcsenior.ttf'); }
 
 .puzzle-selection-button {
+	font-size: 25px;
+	font-family: helvetica;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: -1px -1px rgb(30, 30, 30);
+	color: rgb(190, 190, 190);
+	
+	background: rgb(100, 100, 100);
+	
 	display: inline-block;
 	margin: 0px;
 	height: 48px;
 	width: 48px;
 	line-height: 48px;
 	float: left;
-		
-	font-size: 25px;
-	font-family: helvetica;
-	font-weight: bold;
-	text-align: center;
-	text-decoration: none;
-	color: rgba(0, 0, 0, 0.9);
 	
-	border-right: 1px solid rgba(0, 0, 0, 1.0);
-	border-bottom: 1px solid rgba(0, 0, 0, 1.0);
-	border-top: 1px solid rgba(0, 0, 0, 1.0);
-	border-left: 1px solid rgba(0, 0, 0, 1.0);
+	border-right: 2px solid rgb(152, 152, 152);
+	border-bottom: 2px solid rgb(152, 152, 152);
+}
+
+.puzzle-selection-button:last-child {
+	border-right: none;
+}
+
+.row:last-child .puzzle-selection-button {
+	border-bottom: none;
 }
 
 .solved {
-	background: rgba(80, 180, 80, 1.0);
+	color: rgb(235, 225, 80);
 	-webkit-transition: all 1s;
 }
 
