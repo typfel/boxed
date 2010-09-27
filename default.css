@@ -116,6 +116,12 @@ body {
 	-webkit-transition: all 1s;
 }
 
+#game-title {
+	font-family: helvetica;
+	font-size: 35px;
+	color: rgb(200, 200, 200);
+}
+
 .block {
 	position: absolute;
 	-webkit-transform: translate3d(0, 0, 0);

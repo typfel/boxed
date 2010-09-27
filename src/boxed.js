@@ -1120,13 +1120,13 @@ function PuzzleTipster(dialog, boxed) {
 		$(dialog).toggleClass('hidden', true);
 	});
 	
-	boxed.began(function (event, puzzle) {		
+	boxed.began(function (event, puzzle) {
 		$(dialog).find('#message').html(puzzle.tip);
 		$(dialog).toggleClass('hidden', false);
 		
 		toggleMessageTimer = setTimeout(function () {
 			$(dialog).toggleClass('hidden', true);
-		}, 10000);
+		}, 4000);
 	});
 	
 	boxed.solved(function () {
