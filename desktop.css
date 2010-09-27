@@ -1,5 +1,10 @@
 @import url("default.css");
 
 #playfield {
+	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;
+	border: 5px;
+	-webkit-background-clip: padding;
+	margin-top: 10px;
 	width: 760px;
+	height: 600px;
 }

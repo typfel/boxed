@@ -6,23 +6,6 @@ body {
 	background: url(images/paper02.png);
 }
 
-#playfield {
-	bottom: 0px;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	margin: 0 auto;
-	background: url(images/paper01.png);
-}
-
-#scoreboard {
-	position: absolute;
-	display: none;
-	z-index: 9999;
-	left: 50px;
-	top: 20px;
-}
-
 .center-container {
 	position: absolute;
 	z-index: 9999;
@@ -36,16 +19,41 @@ body {
 	margin: 0 auto;
 }
 
+#playfield {
+	bottom: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+	background: url(images/paper01.png);
+}
+
+#topbar {
+	margin: 0 auto;
+	position: relative;
+	right: 8px;
+	width: 800px;
+	height: 60px;
+	padding-left: 16px;
+	padding-right: 16px;
+	background-image: url("images/topbar_left.png"), url("images/topbar_right.png"), url("images/topbar_middle.png");
+	background-repeat: no-repeat, no-repeat, repeat;
+	background-position: left bottom, right bottom, left bottom;
+	-webkit-background-origin: padding, padding, content;
+	-webkit-background-clip: padding, padding, content;
+}
+
 #puzzle-selection-dialog {
 	bottom: 150px;
 	width: 300px;
 	height: 300px;
-	background: rgba(0, 0, 0, 1.0);
-	border: 5px solid gray;
-	border-radius: 5px;
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666666), to(#555555));
+	-webkit-background-clip: padding;
+	border: 5px;
+	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;
 	-webkit-transition: all 1s;
 }
+
+@font-face { font-family: PCSenior; src: url('pcsenior.ttf'); }
 
 .puzzle-selection-button {
 	display: inline-block;
@@ -54,31 +62,23 @@ body {
 	width: 48px;
 	line-height: 48px;
 	float: left;
-	
+		
 	font-size: 25px;
 	font-family: helvetica;
+	font-weight: bold;
 	text-align: center;
 	text-decoration: none;
-	color: rgb(180, 180, 180);
-	text-shadow: -1px -1px black;
+	color: rgba(0, 0, 0, 0.9);
 	
-	border-right: 1px solid darkgray;
-	border-bottom: 1px solid darkgray;
-	border-top: 1px solid darkgray;
-	border-left: 1px solid darkgray;
+	border-right: 1px solid rgba(0, 0, 0, 1.0);
+	border-bottom: 1px solid rgba(0, 0, 0, 1.0);
+	border-top: 1px solid rgba(0, 0, 0, 1.0);
+	border-left: 1px solid rgba(0, 0, 0, 1.0);
 }
 
 .solved {
-	background: rgba(40, 150, 40, 0.5);
+	background: rgba(80, 180, 80, 1.0);
 	-webkit-transition: all 1s;
-}
-
-.score {
-	font-size: 60px;
-	font-family: helvetica;
-	color: white;
-	text-shadow: 2px 2px 4px black;
-	margin-right: 10px;
 }
 
 #message-container {
@@ -89,6 +89,7 @@ body {
 	border-top: 2px solid rgba(50, 50, 50, 0.4);
 	background: rgba(100, 100, 100, 0.2);
 	-webkit-transition: all 1s;
+	display: none;
 }
 
 #message {
