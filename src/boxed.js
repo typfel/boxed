@@ -106,27 +106,27 @@ var puzzles = [
 		puzzle: ["knight1", "knight3"]
 	},
 	{
-		tip: "meh meh",
+		tip: "Meh meh meh",
 		puzzle: ["vline", "knight1", "knight4"]
 	},
 	{
-		tip: "blocks grouped together can merge into a smaller version of itself",
+		tip: "Blocks grouped together can merge into a smaller version of itself",
 		puzzle: ["tee", "vline", "hline", "vline", "knight3", "knight3f", "hline", "vline3"]
 	},
 	{
-		tip: "galet",
+		tip: "Galet",
 		puzzle:	["knight3", "knight4", "knight1f", "knight4f"]
 	},
 	{
-		tip: "blocks only merge when they form a block which can be shrunken",
+		tip: "Blocks only merge when they form a block which can be shrunken",
 		puzzle: ["dot", "knight1", "knight1", "knight3", "knight4", "knight1", "knight3"]
 	},
 	{
-		tip: "getting harder",
+		tip: "Getting harder",
 		puzzle: ["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"]
 	},
 	{
-		tip: "wazza what?!",
+		tip: "Wazza what?!",
 		puzzle: ["knight1", "hline", "hline3", "vline", "vline", "dot"]
 	},
 	{
