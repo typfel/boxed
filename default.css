@@ -52,8 +52,6 @@ body {
 	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;;
 }
 
-@font-face { font-family: PCSenior; src: url('pcsenior.ttf'); }
-
 .puzzle-selection-button {
 	font-size: 25px;
 	font-family: helvetica;
@@ -91,23 +89,31 @@ body {
 
 #message-container {
 	position: absolute;
-	height: 100px;
+	top: 40%;
 	width: 100%;
-	bottom: 0px;
-	border-top: 2px solid rgba(50, 50, 50, 0.4);
-	background: rgba(100, 100, 100, 0.2);
-	-webkit-transition: all 1s;
-	display: none;
+	z-index: 10000;
+}
+
+#message-container.hidden {
+	z-index: -1;	
+}
+
+.hidden #message  {
+	opacity: 0;
 }
 
 #message {
 	font-size: 40px;
 	text-align: center;
 	padding: 10px;
-}
-
-.message-hidden {
-	-webkit-transform: translate3d(0px, 102px, 0px);
+	margin: 0 auto;
+	width: 500px;
+	background: rgba(100, 100, 100, 1.0);
+	
+	border: 5px;
+	-webkit-border-image: url("images/pixelborder.png") 5 round stretch;
+	-webkit-background-clip: padding;
+	-webkit-transition: all 1s;
 }
 
 .block {
