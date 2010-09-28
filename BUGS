@@ -1,0 +1,3 @@
+- Collision detection collapses at high speeds
+- Solution checker gives false positives on odd aligned shapes
+- Renderer doesn't handle holes
