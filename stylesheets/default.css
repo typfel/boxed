@@ -43,6 +43,36 @@ body {
 	-webkit-background-clip: padding, padding, content;
 }
 
+#feedback {
+	z-index: 99999;
+	position: absolute;
+	right: 20px;
+	top: 30px;
+	padding-bottom: 2px;
+	background: rgb(165, 165, 165);
+	
+	border: 5px;
+	-webkit-border-image: url("/images/pixelborder.png") 5 round stretch;
+	-webkit-background-clip: padding;
+}
+
+#feedback textarea {
+	max-width: 200px;
+	width: 200px;
+	height: 200px;
+}
+
+#feedback-close {
+	color: black;
+}
+
+#feedback-button {
+	float: right;
+	margin-top: 12px;
+	margin-right: 20px;
+	font-family: helvetica;
+}
+
 #puzzle-selection-dialog {
 	bottom: 150px;
 	width: 298px;
@@ -95,11 +125,12 @@ body {
 }
 
 #message-container.hidden {
-	z-index: -1;	
+	z-index: -1;
 }
 
-.hidden #message  {
+.hidden  {
 	opacity: 0;
+	display: none;
 }
 
 #message {
@@ -119,7 +150,9 @@ body {
 #game-title {
 	font-family: helvetica;
 	font-size: 35px;
-	color: rgb(200, 200, 200);
+	font-weight: bold;
+	color: rgba(200, 200, 200, 0);
+	-webkit-text-stroke: 2px #000;
 }
 
 .block {

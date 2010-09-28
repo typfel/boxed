@@ -14,8 +14,17 @@
 	<body>
 		<div id="topbar">
 			<span id="game-title">All these boxes</span>
+			<span id="feedback-button">Give Feedback</span>
+			
+			<div id="feedback" class="hidden">
+				<form>
+					<textarea name="message" placeholder="So what did you think?"></textarea><br/>
+					<input id="feedback-send" type="button" value="Send feedback" /> or
+					<a href="#" id="feedback-close">close</a>
+				</form>
+			</div>
 		</div>
-		
+				
 		<div class="center-container">			
 		<div class="center" id="puzzle-selection-dialog">
 			<div class="row">
@@ -80,6 +89,26 @@
 				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
 				progress = new ProgressRecorder(document.getElementById("puzzle-selection-dialog"), boxed);
 				tipster = new PuzzleTipster($("#message-container"), boxed);
+			});
+			
+			$('#feedback-button').click(function (event) {
+				$('#feedback').toggleClass('hidden');
+			});
+			
+			$('#feedback-close').click( function (event) {
+				event.preventDefault();
+				$('#feedback').toggleClass('hidden');
+			});
+			
+			$('#feedback-send').click(function (event) {
+				$.ajax({
+					type: "post",
+					url: "/feedback",
+					data: "message=" + $('#feedback textarea').val(),
+					success: function(msg) {
+						alert("sent: " + msg);
+					}
+				});
 			});
 			
 			window.onresize = function() {
