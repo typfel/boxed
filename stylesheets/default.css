@@ -24,7 +24,7 @@ body {
 }
 
 .hidden  {
-	z-index: -1;
+	//z-index: -1;
 	opacity: 0;
 	visibility: hidden;
 }
@@ -37,7 +37,7 @@ body {
 	margin: 0 auto;
 	background: url(/images/paper01.png);
 	border: 5px;
-	-webkit-border-image: url("/images/pixelborder.png") 5 round stretch;
+	-webkit-border-image: url("/images/pixelborder_dark.png") 5 round stretch;
 	-webkit-background-clip: padding;
 }
 
@@ -129,18 +129,16 @@ body {
 	color: rgb(235, 225, 80);
 }
 
-#puzzle-tip {
-	-webkit-transition: all 0.3s;
-}
-
 #message {
-	font-size: 40px;
-	text-align: center;
 	padding: 10px;
 	margin: 0 auto;
 	width: 500px;
-	top: -50px;
-	background: rgba(100, 100, 100, 1.0);
+	
+	color: white;
+	font-size: 40px;
+	text-align: center;
+	background: rgb(80, 80, 80);
+	
 	
 	border: 5px;
 	-webkit-border-image: url("/images/pixelborder.png") 5 round stretch;
