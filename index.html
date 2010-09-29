@@ -106,7 +106,7 @@
 					url: "/feedback",
 					data: "message=" + $('#feedback textarea').val(),
 					success: function(msg) {
-						alert("sent: " + msg);
+						$('#feedback').toggleClass('hidden', true);
 					}
 				});
 			});
