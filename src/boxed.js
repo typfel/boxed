@@ -1114,23 +1114,17 @@ function ProgressRecorder(dialog, boxed) {
 }
 
 function PuzzleTipster(dialog, boxed) {
-	var toggleMessageTimer;
-	
-	$(dialog).find('#message').click(function (event) {
+		
+	$(dialog).click(function (event) {
 		$(dialog).toggleClass('hidden', true);
 	});
 	
 	boxed.began(function (event, puzzle) {
 		$(dialog).find('#message').html(puzzle.tip);
 		$(dialog).toggleClass('hidden', false);
-		
-		toggleMessageTimer = setTimeout(function () {
-			$(dialog).toggleClass('hidden', true);
-		}, 4000);
 	});
 	
 	boxed.solved(function () {
-		clearTimeout(toggleMessageTimer);
 		$(dialog).toggleClass('hidden', true);
 	});
 }

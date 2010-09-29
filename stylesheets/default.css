@@ -24,9 +24,9 @@ body {
 }
 
 .hidden  {
-	opacity: 0;
-	display: none;
 	z-index: -1;
+	opacity: 0;
+	visibility: hidden;
 }
 
 #playfield {
@@ -127,7 +127,10 @@ body {
 
 .solved {
 	color: rgb(235, 225, 80);
-	-webkit-transition: all 1s;
+}
+
+#puzzle-tip {
+	-webkit-transition: all 0.3s;
 }
 
 #message {
@@ -142,7 +145,6 @@ body {
 	border: 5px;
 	-webkit-border-image: url("/images/pixelborder.png") 5 round stretch;
 	-webkit-background-clip: padding;
-	-webkit-transition: all 1s;
 }
 
 #game-title {
