@@ -11,9 +11,9 @@ class MainPage(webapp.RequestHandler):
 
 class Feedback(webapp.RequestHandler):
 	def post(self):
-		mail.send_mail(sender="All These Boxes <feedback@alltheseboxes.com>",
+		mail.send_mail(sender="All These Boxes <jacob.persson@robotcrowd.com>",
 					   to="Jacob Persson <jacob.persson@robotcrowd.com>",
-					   subject="Feedback Response",
+					   subject="All These Boxes - Feedback Response",
 					   body=self.request.get("message"))
 
 application = webapp.WSGIApplication([('/', MainPage),
