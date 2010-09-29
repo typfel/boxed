@@ -6,20 +6,31 @@ body {
 	background: url(/images/paper02.png);
 }
 
-.center-container {
+.centering-container {
 	position: absolute;
-	z-index: 9999;
+	height: 100%;
 	width: 100%;
-	height: 0px;
-	top: 50%;
+	z-index: 9999;
+	
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
 }
 
-.center {
-	position: relative;
-	margin: 0 auto;
+.block {
+	position: absolute;
+	-webkit-transform: translate3d(0, 0, 0);
+}
+
+.hidden  {
+	opacity: 0;
+	display: none;
+	z-index: -1;
 }
 
 #playfield {
+	position: relative;
 	bottom: 0px;
 	width: 100%;
 	height: 100%;
@@ -73,7 +84,7 @@ body {
 	font-family: helvetica;
 }
 
-#puzzle-selection-dialog {
+#puzzle-selection-table {
 	bottom: 150px;
 	width: 298px;
 	height: 298px;
@@ -117,28 +128,13 @@ body {
 	-webkit-transition: all 1s;
 }
 
-#message-container {
-	position: absolute;
-	top: 40%;
-	width: 100%;
-	z-index: 10000;
-}
-
-#message-container.hidden {
-	z-index: -1;
-}
-
-.hidden  {
-	opacity: 0;
-	display: none;
-}
-
 #message {
 	font-size: 40px;
 	text-align: center;
 	padding: 10px;
 	margin: 0 auto;
 	width: 500px;
+	top: -50px;
 	background: rgba(100, 100, 100, 1.0);
 	
 	border: 5px;
@@ -153,9 +149,4 @@ body {
 	font-weight: bold;
 	color: rgba(200, 200, 200, 0);
 	-webkit-text-stroke: 2px #000;
-}
-
-.block {
-	position: absolute;
-	-webkit-transform: translate3d(0, 0, 0);
 }
