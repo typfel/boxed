@@ -13,18 +13,19 @@
 	</head>
 	<body>
 		<div id="topbar">
-			<span id="game-title">All these boxes</span>
 			<span id="feedback-button">Give Feedback</span>
-			
-			<div id="feedback" class="hidden">
-				<form>
-					<textarea name="message" placeholder="So what did you think?"></textarea><br/>
-					<input id="feedback-send" type="button" value="Send feedback" /> or
-					<a href="#" id="feedback-close">close</a>
-				</form>
-			</div>
 		</div>
 		
+		<div id="feedback" class="hidden">
+			<form>
+				<textarea name="message" placeholder="So what did you think?"></textarea><br/>
+				<input id="feedback-send" type="button" value="Send feedback" /> or
+				<a href="#" id="feedback-close">close</a>
+			</form>
+		</div>
+		
+		<div id="playfield-container">
+		<div id="playfield-shadow"></div>
 		<div id="playfield">
 				
 		<div id="puzzle-selection" class="centering-container">
@@ -79,16 +80,17 @@
 				</div>
 			</div>
 		</div>
-		
+				
 		<div id="puzzle-tip" class="centering-container hidden">
 			<div id="message"><span>Puzzle tip goes here.</span></div>
 		</div>
 				
 		</div>
+		</div>
 						
 		<script type="text/javascript">
 			$(document).ready(function() {
-				boxed = new Boxed(document.getElementById("playfield"), document.getElementById("scoreboard"));
+				boxed = new Boxed(document.getElementById("playfield"));
 				progress = new ProgressRecorder(document.getElementById("puzzle-selection"), boxed);
 				tipster = new PuzzleTipster($("#puzzle-tip"), boxed);
 			});

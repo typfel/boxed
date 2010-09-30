@@ -1,7 +1,7 @@
 @import url("default.css");
 
-#playfield {
-	margin-top: 10px;
+#playfield-container {
+	margin-top: 50px;
 	width: 760px;
 	height: 600px;
 }

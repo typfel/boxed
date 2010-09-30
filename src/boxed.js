@@ -606,12 +606,10 @@ Block.prototype = {
 	}	
 };
 
-function Boxed(playfieldElement, scoreboardElement) {
+function Boxed(playfieldElement) {
 	this.container = playfieldElement;
-	this.scoreboard = scoreboardElement;
 	this.pieces = [];
 	
-	this.score = 0;
 	this.base = 0;
 	this.multiplier = 1;
 	
@@ -625,7 +623,6 @@ function Boxed(playfieldElement, scoreboardElement) {
 		event.preventDefault();
 	};
 
-	this._initializeScoring();
 	this.resize($(this.container).width(), $(this.container).height());
 }
 
@@ -921,27 +918,7 @@ Boxed.prototype = {
 		block.setPositionAnimated(position.x + correction.x,
 								  position.y + correction.y, callback);
 	},
-		
-	_initializeScoring: function ()	{
-		$(this.scoreboard).append('<span class="score" id="score-total">0</span>');
-	},
-		
-	addScore: function (base, multiplier) {
-		var self = this;
-		var baseE = $(document.createElement('span')).addClass('score score-base').html(base);
-		var multiplierE = $(document.createElement('span')).addClass('score score-multiplier').html(multiplier);
-		
-		$(this.scoreboard).append(baseE);
-		$(this.scoreboard).append(multiplierE);
-		
-		setTimeout(function () {
-			baseE.remove();
-			multiplierE.remove();
-			self.score += base * multiplier;
-			$('#score-total').html(self.score);
-		}, 1000);
-	},
-		 
+			 
 	resize: function (width, height) {
 		console.log("width: " + width + " heigth: " + height);
 		
@@ -1055,7 +1032,6 @@ Boxed.prototype = {
 			
 			solutions.forEach(function (solution) {
 				var merged = self._mergeBlocks(solution);
-				self.addScore(200, 2);
 				
 				setTimeout(function() {
 					// wait until the canvas element is initialized
