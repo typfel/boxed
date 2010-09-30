@@ -142,24 +142,24 @@ var puzzles = [
 		puzzle: ["knight1", "knight3"]
 	},
 	{
-		tip: "Say Cheese!",
-		puzzle: ["vline5", "vline5", "hline5", "hline5", "vline3", "vline3", "hline3", "hline3"]
-	},
-	{
-		tip: "Ompa lompa",
-		puzzle: ["corner1", "vline3", "cross", "hline3", "corner3"]
-	},
-	{
-		tip: "A box with three unit sides can't be shrunken.",
+		tip: "The big box doesn't shrink because it has odd length sides",
 		puzzle: ["box3", "vline3", "hline"]
-	},
-	{
-		tip: "Write something clever here",
-		puzzle: ["box3", "box3", "vline3", "vline3", "hline2", "hline2"]
 	},
 	{
 		tip: "The weakest link",
 		puzzle: ["corner1", "corner2", "corner3", "corner4", "dot"]
+	},
+	{
+		tip: "Easy peasy",
+		puzzle: ["tee", "hline2", "tee", "dot", "dot"]
+	},
+	{
+		tip: "Say Cheese!",
+		puzzle: ["vline5", "vline5", "hline5", "hline5", "vline3", "vline3", "hline3", "hline3"]
+	},
+	{
+		tip: "Write something clever here",
+		puzzle: ["box3", "box3", "vline3", "vline3", "hline2", "hline2"]
 	},
 	{
 		tip: "Grrr no more",
@@ -189,10 +189,6 @@ var puzzles = [
 		tip: "Wazza what?!",
 		puzzle: ["knight1", "hline", "hline3", "vline", "vline", "dot"]
 	},
-	{
-		tip: "Easy peasy",
-		puzzle: ["tee", "hline2", "tee", "dot", "dot"]
-	}
 ];
 
 function boundingBoxTest(box1, box2) {
