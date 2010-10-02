@@ -346,11 +346,10 @@ Function.prototype.bindScope = function(scope) {
 };
 
 function Block(container, matrix, blockSize, color) {
-	this.lineWidth = 2;
 	this.matrix = matrix;
 	this._matrixSize = this._calculateSize(matrix);
 	this._size = { width: this._matrixSize.width * blockSize, height: this._matrixSize.height * blockSize };
-	this.canvas = container.appendChild(this._createCanvas(this._size.width + this.lineWidth, this._size.height + this.lineWidth));
+	this.canvas = container.appendChild(this._createCanvas(this._size.width, this._size.height));
 	this.ctx = this.canvas.getContext("2d");
 	this._render(this.ctx, matrix, blockSize, color);
 	this.transforms = ['translate3d(0,0)'];
@@ -369,108 +368,47 @@ Block.prototype = {
 		canvas.setAttribute('height', height);
 		return canvas;
 	},
-	
+		
 	_render: function (ctx, matrix, blockSize, color) {
-		var lookup = [
-			{ x:  1, y:  0 },
-			{ x:  0, y:  1 },
-			{ x: -1, y:  0 },
-			{ x:  0, y: -1 }
-		];
-
-		var rotateLeft = function(vector) {
-			for (var i = 0; i < 4; i++) {
-				if (lookup[i].x == vector.x && lookup[i].y == vector.y) {
-					return lookup[(4+i-1) % 4];
-				}				
-			}
-		};
-
-		var rotateRight = function(vector) {
-			for (var i = 0; i < 4; i++) {
-				if (lookup[i].x == vector.x && lookup[i].y == vector.y) {
-					return lookup[(4+i+1) % 4];
-				}				
-			}
-		};
-
-		var translate = function (point, vector) {
-			return { x: point.x + vector.x, y: point.y + vector.y };
-		};
-
-		var isEqual = function (vector1, vector2) {
-			return vector1.x == vector2.x && vector1.y == vector2.y;
-		};
-
-		var get = function (x, y) {
-			var row = matrix[y];
-			return row ? row[x] : null;
-		};
-		      
-		// find first active block	
-		var start = this.getOffset();
-
-		var turns = 0;
-		var direction = {x: 1, y: 0 };
-		var position = start;
-		var pointer = { x: position.x * blockSize, y: position.y * blockSize };
-		pointer = translate(pointer, { x: direction.x * blockSize, y: direction.y * blockSize });
-
+		
 		if (color) {
 			this.color = color;
 		} else {
-			var r = Math.floor(50 + Math.random() * 200);
-			var g = Math.floor(50 + Math.random() * 200);
-			var b = Math.floor(50 + Math.random() * 200);
+			var r = Math.floor(50 + Math.random() * 170);
+			var g = Math.floor(50 + Math.random() * 170);
+			var b = Math.floor(50 + Math.random() * 170);
 			this.color = "rgb(" + [r ,g, b].join(',') + ")";
 		}
-
-		ctx.fillStyle = this.color;
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = this.lineWidth;
-		ctx.lineCap = 'round';
-		ctx.translate(ctx.lineWidth / 2, ctx.lineWidth / 2);
-		ctx.beginPath();
-		ctx.moveTo(pointer.x, pointer.y);
 		
-		var lineTo = function (dx, dy) {
-			pointer = translate(pointer, { x: dx, y: dy });
-			ctx.lineTo(pointer.x, pointer.y);
-		};
-
-		do {
-			var ff = translate(position, direction);
-			var rr = translate(position, rotateLeft(direction));
-			var fr = translate(ff, rotateLeft(direction));
-
-			var ffValue = get(ff.x, ff.y);
-			var rrValue = get(rr.x, rr.y);
-			var frValue = get(fr.x, fr.y);
-
-			if (rrValue && turns === 0) {
-				// turn right
-				direction = rotateLeft(direction);
-				turns++;
-			} else 
-			if (ffValue) {
-				// go forward
-				position = ff;
-				turns = 0;
-				if (!frValue) {
-					lineTo(direction.x * blockSize, direction.y * blockSize);
+		function renderBox(ctx, x, y, color) {
+			ctx.fillStyle = color;
+			ctx.fillRect(x, y, blockSize, blockSize);
+			
+			var inset = 2;
+			var insetLength = blockSize - inset;
+			
+			ctx.fillStyle = "white";
+			ctx.globalAlpha = 0.5;
+			ctx.fillRect(x, y, insetLength, inset);
+			ctx.globalAlpha = 0.3;
+			ctx.fillRect(x, y + inset, inset, insetLength);
+			
+			ctx.fillStyle = "black";
+			ctx.globalAlpha = 0.5;
+			ctx.fillRect(x + inset, y + insetLength, insetLength, inset);
+			ctx.globalAlpha = 0.3;
+			ctx.fillRect(x + insetLength, y, inset, insetLength);
+			
+			ctx.globalAlpha = 1.0;
+		}
+		
+		for (var y = 0; y < matrix.length; y++) {
+			for (var x = 0; x < matrix[y].length; x++) {
+				if (matrix[y][x] === 1) {
+					renderBox(ctx, x * blockSize, y * blockSize, this.color);
 				}
-			} else {
-				// turn left
-				direction = rotateRight(direction);
-				lineTo(direction.x * blockSize, direction.y * blockSize);
-				turns++;
 			}
-
-		} while (!(isEqual(position, start) && isEqual(direction, { x: 1, y: 0 })));
-
-		ctx.closePath();
-		ctx.fill();
-		ctx.stroke();
+		}
 	},
 	
 	_calculateSize: function(matrix, blockSize) {
