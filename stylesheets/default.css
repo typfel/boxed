@@ -128,6 +128,7 @@ body {
 }
 
 #feedback-button.pressed {
+	color: rgb(220, 220, 220);
 	-webkit-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
 	-moz-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
 }
