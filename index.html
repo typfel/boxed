@@ -97,11 +97,13 @@
 			
 			$('#feedback-button').click(function (event) {
 				$('#feedback').toggleClass('hidden');
+				$('#feedback-button').toggleClass("pressed");
 			});
 			
 			$('#feedback-close').click( function (event) {
 				event.preventDefault();
 				$('#feedback').toggleClass('hidden');
+				$('#feedback-button').toggleClass("pressed", false);
 			});
 			
 			$('#feedback-send').click(function (event) {
@@ -111,6 +113,7 @@
 					data: "message=" + $('#feedback textarea').val(),
 					success: function(msg) {
 						$('#feedback').toggleClass('hidden', true);
+						$('#feedback-button').toggleClass("pressed", false);
 					}
 				});
 			});

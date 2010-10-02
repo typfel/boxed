@@ -3,7 +3,7 @@ body {
 	height: 100%;
 	width: 100%;
 	margin: 0px;
-	background: url(/images/paper02.png);
+	background: rgb(120, 100, 140) url(/images/question_pattern.png);
 }
 
 .centering-container {
@@ -72,7 +72,10 @@ body {
 	height: 150px;
 	width: 100%;
 	
-	background: rgb(230, 230, 255);	    
+	background: rgb(70, 50, 80);
+	
+	//background: -webkit-gradient(linear, left top,  left bottom, color-stop(0, rgb(40, 40, 40)), color-stop(1, rgb(20, 20, 20)));
+	
 	border-bottom: 5px solid rgb(50, 50, 50);
 }
 
@@ -80,11 +83,15 @@ body {
 	z-index: 999999;
 	position: absolute;
 	right: 20px;
-	top: 30px;
+	top: 50px;
 	padding-bottom: 2px;
 	
+	font-family: helvetica;
+	font-size: 12px;
+	color: white;
+	
 	border: 5px;
-	-webkit-border-image: url("/images/pixelborder_light_fill.png") 5 round stretch;
+	-webkit-border-image: url("/images/pixelborder_dark_fill.png") 5 round stretch;
 	-webkit-background-clip: padding;
 	
 	-moz-border-image: url("/images/pixelborder_light_fill.png") 5 round stretch;
@@ -92,30 +99,37 @@ body {
 }
 
 #feedback textarea {
-	max-width: 200px;
-	width: 200px;
+	max-width: 300px;
+	width: 300px;
 	height: 200px;
 }
 
 #feedback-close {
-	color: black;
+	color: white;
 }
 
 #feedback-button {
 	float: right;
 	margin-top: 12px;
 	margin-right: 20px;
+	padding-left: 4px;
+	padding-right: 4px;
 	font-size: 15px;
 	font-family: helvetica;
 	height: 25px; line-height: 25px;
 	color: white;
 	
 	border: 5px;
-	-webkit-border-image: url("/images/pixelborder_dark_fill.png") 5 round stretch;
+	-webkit-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
 	-webkit-background-clip: padding;
 	
-	-moz-border-image: url("/images/pixelborder_dark_fill.png") 5 round stretch;
+	-moz-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
 	-moz-background-clip: padding;
+}
+
+#feedback-button.pressed {
+	-webkit-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
+	-moz-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
 }
 
 #puzzle-selection-table {
@@ -172,11 +186,12 @@ body {
 	
 	color: white;
 	font-size: 40px;
+	font-family: helvetica;
 	text-align: center;
 	background: rgb(80, 80, 80);
 	
 	border: 5px;
-	-webkit-border-image: url("/images/pixelborder.png") 5 round stretch;
+	-webkit-border-image: url("/images/pixelborder_dark_fill.png") 5 round stretch;
 	-webkit-background-clip: padding;
 	-moz-border-image: url("/images/pixelborder.png") 5 round stretch;
 	-moz-background-clip: padding;
