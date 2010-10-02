@@ -915,9 +915,7 @@ Boxed.prototype = {
 								  position.y + correction.y, callback);
 	},
 			 
-	resize: function (width, height) {
-		console.log("width: " + width + " heigth: " + height);
-		
+	resize: function (width, height) {		
 		this.occupationGrid = [];
 		this.containerWidth = width;
 		this.containerHeight = height;
