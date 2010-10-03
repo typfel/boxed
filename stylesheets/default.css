@@ -72,10 +72,7 @@ body {
 	height: 150px;
 	width: 100%;
 	
-	background: rgb(70, 50, 80);
-	
-	//background: -webkit-gradient(linear, left top,  left bottom, color-stop(0, rgb(40, 40, 40)), color-stop(1, rgb(20, 20, 20)));
-	
+	background: rgb(70, 50, 80);	
 	border-bottom: 5px solid rgb(50, 50, 50);
 }
 
