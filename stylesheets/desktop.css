@@ -2,11 +2,11 @@
 
 #playfield-container {
 	margin-top: 50px;
-	width: 760px;
-	height: 600px;
+	width: 810px;
+	height: 610px;
 }
 
 #playfield {
-	width: 750px;
-	height: 590px;
+	width: 800px;
+	height: 600px;
 }
