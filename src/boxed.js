@@ -1,202 +1,238 @@
-var Shapes = {
+var S = {
 	
-	hline:
-	[[1, 1, 1, 1]],
-	
-	knight1:	
-	[[1, 0],
-	 [1, 0],
-	 [1, 1]],
-	
-	knight2:	
-	[[1, 1, 1],
-	 [1, 0, 0]],
-	
-	knight3:	
-	[[1, 1],
-	 [0, 1],
-	 [0, 1]],
-	
-	knight4:	
-	[[0, 0, 1],
-	 [1, 1, 1]],
-	
-	knight1f:	
-	[[0, 1],
-	 [0, 1],
-	 [1, 1]],
-
-	knight2f:	
-	[[1, 0, 0],
-	 [1, 1, 1]],
-
-	knight3f:	
-	[[1, 1],
-	 [1, 0],
-	 [1, 0]],
-
-	knight4f:	
-	[[1, 1, 1],
-	 [0, 0, 1]],
-		
-	hle:
-	[[1, 0, 0],
-	 [1, 1, 1]],
-	
-	fhle:
-	[[1, 1, 1],
-	 [1, 0, 0]],
-	
-	hel:
-	[[1, 1, 1],
-	 [0, 0, 1]],
-	
-	fhel:
-	[[0, 0, 1],
-	 [1, 1, 1]],
-	
-	tee:
-	[[0, 1, 0],
-	 [1, 1, 1]],
-	
-	diag1:	
-	[[1, 0, 0],
-	 [1, 0, 0],
-	 [1, 1, 1]],
-	
-	diag2:	
-	[[1, 1, 1],
-	 [1, 0, 0],
-	 [1, 0, 0]],
-	
-	diag3:	
-	[[1, 1, 1],
-	 [0, 0, 1],
-	 [0, 0, 1]],
-		
-	dot:	
+	dot:
 	[[1]],
-	
-	hline2:
-	[[1,1]],
-	
-	vline2:
-	[[1],
-	 [1]],
-	
-	hline3:
-	[[1,1,1]],
-	
-	vline3:
-	[[1],
-	 [1],
-	 [1]],
-	
-	hline5:
-	[[1,1,1,1,1]],
-
-	vline5:
-	[[1],
-	 [1],
-	 [1],
-	 [1],
-	 [1]],
-	
-	vline:
-	[[1],
-	 [1],
-	 [1],
-	 [1]],
-	
-	cross:
-	[[0,1,0],
-	 [1,1,1],
-	 [0,1,0]],
-	
-	corner1:
-	[[1,0],
-	 [1,1]],
-	
-	corner2:
-	[[1,1],
-	 [1,0]],
-	
-	corner3:
-	[[1,1],
-	 [0,1]],
-	
-	corner4:
-	[[0,1],
-	 [1,1]],
 	
 	box3:
 	[[1,1,1],
 	 [1,1,1],
-	 [1,1,1]]
+	 [1,1,1]],
 	
+	line:
+	{
+		vertical: 
+		{
+			two:
+			[[1,1]],
+			
+			three:
+			[[1,1,1]],
+			
+			four:
+			[[1,1,1,1]],
+			
+			five:
+			[[1,1,1,1,1]],
+		},
+		
+		horizontal:
+		{
+			two:
+			[[1],
+			 [1]],
+			
+			three:
+			[[1],
+			 [1],
+			 [1]],
+			
+			four:
+			[[1],
+			 [1],
+			 [1],
+			 [1]],
+			
+			five:
+			[[1],
+			 [1],
+			 [1],
+			 [1],
+			 [1]],
+		}
+	},
+	
+	knight:
+	{
+		unflipped:
+		{
+			north:
+			[[1, 0],
+			 [1, 0],
+			 [1, 1]],
+			
+			east:
+			[[1, 1, 1],
+			 [1, 0, 0]],
+			
+			south:
+			[[1, 1],
+			 [0, 1],
+			 [0, 1]],
+			
+			west:
+			[[0, 0, 1],
+			 [1, 1, 1]],
+		},
+		
+		flipped:
+		{
+			north:
+			[[0, 1],
+			 [0, 1],
+			 [1, 1]],
+			
+			east:
+			[[1, 0, 0],
+			 [1, 1, 1]],
+			
+			south:
+			[[1, 1],
+			 [1, 0],
+			 [1, 0]],
+			
+			west:
+			[[1, 1, 1],
+			 [0, 0, 1]],
+		}
+	},
+			
+	tee:
+	[[0, 1, 0],
+	 [1, 1, 1]],
+	
+	diagonal:
+	{
+		north:
+		{
+			two:
+			[[1,0],
+			 [1,1]],
+			
+			three:
+			[[1, 0, 0],
+			 [1, 0, 0],
+			 [1, 1, 1]],
+		},
+		
+		east:
+		{
+			two:
+			[[1,1],
+			 [1,0]],
+			
+			three:
+			[[1, 1, 1],
+			 [1, 0, 0],
+			 [1, 0, 0]],
+		},
+		
+		south:
+		{
+			two:
+			[[1,1],
+			 [0,1]],
+			
+			three:
+			[[1, 1, 1],
+			 [0, 0, 1],
+			 [0, 0, 1]],
+		},
+		
+		west:
+		{
+			two:
+			[[0,1],
+			 [1,1]],
+			
+			three:
+			[[0, 0, 1],
+			 [0, 0, 1],
+			 [1, 1, 1]],
+		}
+	},
+	
+	cross:
+	{
+		three:
+		[[0,1,0],
+		 [1,1,1],
+		 [0,1,0]],
+	},	
 };
 
 var puzzles = [
 	{
 		tip: "The puzzle is solved by constructing a single 2x sized block.",
-		puzzle: ["knight1", "knight3"]
+		puzzle: [S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
 		tip: "Sometimes intermediate 2x sized blocks have to be created.",
-		puzzle: ["corner1", "vline2", "vline2"]
+		puzzle: [S.diagonal.north.two, S.line.vertical.two, S.line.vertical.two]
 	},
 	{
 		tip: "The big square isn't a 2x sized block because it has sides of odd lengths",
-		puzzle: ["box3", "vline3", "hline"]
+		puzzle: [S.box3, S.line.vertical.three, S.line.horizontal.four]
 	},
 	{
 		tip: "The final shape of the block doesn't doesn't matter as long as it's a larger version of smaller shape.",
-		puzzle: ["vline3", "vline2", "hline3", "hline"]
+		puzzle: [S.line.vertical.three, S.line.vertical.two, S.line.horizontal.three, S.line.horizontal.four]
 	},
 	{
 		tip: "Chaining",
-		puzzle: ["corner1", "corner2", "corner3", "corner4", "dot"]
+		puzzle: [S.diagonal.north.two, S.diagonal.east.two, S.diagonal.south.two, S.diagonal.west.two, S.dot]
+	},
+	{
+		tip: "The worst tetris piece",
+		puzzle: [S.diagonal.north.three, S.diagonal.north.two, S.diagonal.south.three, S.diagonal.south.two]
 	},
 	{
 		tip: "Easy peasy",
-		puzzle: ["tee", "hline2", "tee", "dot", "dot"]
+		puzzle: [S.tee, S.line.horizontal.two, S.tee, S.dot, S.dot]
 	},
 	{
 		tip: "Say Cheese!",
-		puzzle: ["vline5", "vline5", "hline5", "hline5", "vline3", "vline3", "hline3", "hline3"]
+		puzzle: [S.line.vertical.five, S.line.vertical.five, S.line.horizontal.five, S.line.horizontal.five, S.line.vertical.three, S.line.vertical.three, S.line.horizontal.three, S.line.horizontal.three]
 	},
 	{
 		tip: "Write something clever here",
-		puzzle: ["box3", "box3", "vline3", "vline3", "hline2", "hline2"]
+		puzzle: [S.box3, S.box3, S.line.vertical.three, S.line.vertical.three, S.line.horizontal.two, S.line.horizontal.two]
 	},
 	{
 		tip: "Grrr no more",
-		puzzle: ["knight1f", "knight1", "knight2f", "knight4", "vline2", "vline2"]
+		puzzle: [S.knight.flipped.north, S.knight.unflipped.north, S.knight.flipped.east, S.knight.unflipped.west, S.line.vertical.two, S.line.vertical.two]
 	},
 	{
 		tip: "Meh meh meh",
-		puzzle: ["vline", "knight1", "knight4"]
+		puzzle: [S.line.vertical.four, S.knight.unflipped.north, S.knight.unflipped.west]
 	},
 	{
 		tip: "Blocks grouped together can merge into a smaller version of itself",
-		puzzle: ["tee", "vline", "hline", "vline", "knight3", "knight3f", "hline", "vline3"]
+		puzzle: [S.tee, S.line.vertical.four, S.line.horizontal.four, S.line.vertical.four, S.knight.unflipped.south, S.knight.flipped.south, S.line.horizontal.four, S.line.vertical.three]
 	},
 	{
 		tip: "Galet",
-		puzzle:	["knight3", "knight4", "knight1f", "knight4f"]
+		puzzle:	[S.knight.unflipped.south, S.knight.unflipped.west, S.knight.flipped.north, S.knight.flipped.west]
 	},
 	{
 		tip: "Blocks only merge when they form a block which can be shrunken",
-		puzzle: ["dot", "knight1", "knight1", "knight3", "knight4", "knight1", "knight3"]
+		puzzle: [S.dot, S.knight.unflipped.north, S.knight.unflipped.north, S.knight.unflipped.south, S.knight.unflipped.west, S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
 		tip: "Getting harder",
-		puzzle: ["vline3", "vline3", "hline3", "hline3", "hline2", "hline2"]
+		puzzle: [S.line.vertical.three, S.line.vertical.three, S.line.horizontal.three, S.line.horizontal.three, S.line.horizontal.two, S.line.horizontal.two]
 	},
 	{
 		tip: "Wazza what?!",
-		puzzle: ["knight1", "hline", "hline3", "vline", "vline", "dot"]
+		puzzle: [S.knight.unflipped.north, S.line.horizontal.four, S.line.horizontal.three, S.line.vertical.four, S.line.vertical.four, S.dot]
 	},
+	{
+		tip: "Stairway to heaven",
+		puzzle: [S.line.horizontal.two, S.line.vertical.two, S.line.vertical.two, S.line.vertical.two, S.knight.flipped.south, S.knight.unflipped.west, S.diagonal.south.three, S.line.horizontal.three, S.line.horizontal.three, S.box3, S.box3]
+	},
+	{
+		tip: "Symmetry is a pretty",
+		puzzle: [S.diagonal.north.three, S.diagonal.east.three, S.diagonal.south.three, S.diagonal.west.three, S.line.vertical.four, S.line.vertical.three, S.line.vertical.four, S.line.vertical.three, S.line.horizontal.four, S.line.horizontal.three, S.line.horizontal.four, S.line.horizontal.three]
+	}
 ];
 
 function boundingBoxTest(box1, box2) {
@@ -898,7 +934,7 @@ Boxed.prototype = {
 		var rowHeight = 0;
 		
 		shapes.forEach(function (shape) {
-			var matrix = Shapes[shape];
+			var matrix = shape;
 			var width = matrix[0].length;
 			var height = matrix.length;
 			
