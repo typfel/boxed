@@ -138,15 +138,23 @@ var Shapes = {
 
 var puzzles = [
 	{
-		tip: "The puzzle is solved when only one block remains",
+		tip: "The puzzle is solved by constructing a single 2x sized block.",
 		puzzle: ["knight1", "knight3"]
 	},
 	{
-		tip: "The big box doesn't shrink because it has odd length sides",
+		tip: "Sometimes intermediate 2x sized blocks have to be created.",
+		puzzle: ["corner1", "vline2", "vline2"]
+	},
+	{
+		tip: "The big square isn't a 2x sized block because it has sides of odd lengths",
 		puzzle: ["box3", "vline3", "hline"]
 	},
 	{
-		tip: "The weakest link",
+		tip: "The final shape of the block doesn't doesn't matter as long as it's a larger version of smaller shape.",
+		puzzle: ["vline3", "vline2", "hline3", "hline"]
+	},
+	{
+		tip: "Chaining",
 		puzzle: ["corner1", "corner2", "corner3", "corner4", "dot"]
 	},
 	{
