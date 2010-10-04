@@ -978,12 +978,36 @@ Boxed.prototype = {
 	
 	moved: function (block, dx, dy) {
 		block.lastPosition = block.getPosition();
-
-		var x = block.lastPosition.x + (dx - block.ddx);
-		var y = block.lastPosition.y + (dy - block.ddy);
 		
+		var xdelta = (dx - block.ddx);
+		var ydelta = (dy - block.ddy);
+		
+		var x = block.lastPosition.x + xdelta;
+		var y = block.lastPosition.y + ydelta;
+						
 		block.ddx = dx;
 		block.ddy = dy;
+		
+		var blockSize = this.blockSize / 2;
+		
+		var major = Math.max(Math.abs(xdelta), Math.abs(ydelta));
+		if (major > blockSize) {
+			var steps = Math.floor(major / blockSize);
+			
+			if (Math.abs(xdelta) > Math.abs(ydelta)) {
+				xstep = blockSize;
+				ystep = ydelta / steps;
+			} else {
+				xstep = xdelta / steps;
+				ystep = blockSize;
+			}
+			
+			for (var step = 1; step <= steps; step++) {
+				block.setPosition(block.lastPosition.x + step * xstep, block.lastPosition.y + step * ystep);
+				this._resolveConflicts(block);
+			}
+		}
+				
 		block.setPosition(x, y);
 		this._resolveConflicts(block);
 	},
