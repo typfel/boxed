@@ -772,16 +772,19 @@ Boxed.prototype = {
 		}
 		
 		function scanRange(blocks, start, end, direction) {
-			var consecutive = 0;
 			var x = start.x;
 			var y = start.y;
+			var consecutive = 0;
+			var prev = blocks[occupationGrid[y][x]];
+			
 			
 			do {
-				if (blocks[occupationGrid[y][x]]) {
+				if (prev === blocks[occupationGrid[y][x]]) {
 					consecutive++;
 				} else {
 					if (consecutive % 2 === 0) {
-						consecutive = 0;
+						consecutive = 1;
+						prev = blocks[occupationGrid[y][x]];
 					} else {
 						return false;
 					}
