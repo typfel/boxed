@@ -162,20 +162,20 @@ var S = {
 
 var puzzles = [
 	{
-		tip: "The puzzle is solved by constructing a single 2x sized block.",
+		tip: "The puzzle is solved by constructing a single block.",
 		puzzle: [S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
-		tip: "Sometimes intermediate 2x sized blocks have to be created.",
+		tip: "The final shape of the block doesn't doesn't matter as long as it's a larger version of a smaller shape.",
+		puzzle: [S.line.vertical.three, S.line.vertical.two, S.line.horizontal.three, S.line.horizontal.four]
+	},
+	{
+		tip: "Sometimes intermediate blocks have to be created first.",
 		puzzle: [S.diagonal.north.two, S.line.vertical.two, S.line.vertical.two]
 	},
 	{
-		tip: "The big square isn't a 2x sized block because it has sides of odd lengths",
+		tip: "The big square doesn't shrink because it has odd length sides",
 		puzzle: [S.box3, S.line.vertical.three, S.line.horizontal.four]
-	},
-	{
-		tip: "The final shape of the block doesn't doesn't matter as long as it's a larger version of smaller shape.",
-		puzzle: [S.line.vertical.three, S.line.vertical.two, S.line.horizontal.three, S.line.horizontal.four]
 	},
 	{
 		tip: "Chaining",
@@ -190,7 +190,7 @@ var puzzles = [
 		puzzle: [S.tee, S.line.horizontal.two, S.tee, S.dot, S.dot]
 	},
 	{
-		tip: "Say Cheese!",
+		tip: "Whatever",
 		puzzle: [S.line.vertical.five, S.line.vertical.five, S.line.horizontal.five, S.line.horizontal.five, S.line.vertical.three, S.line.vertical.three, S.line.horizontal.three, S.line.horizontal.three]
 	},
 	{
@@ -206,7 +206,7 @@ var puzzles = [
 		puzzle: [S.line.horizontal.four, S.knight.unflipped.north, S.knight.unflipped.west]
 	},
 	{
-		tip: "Blocks grouped together can merge into a smaller version of itself",
+		tip: "Så här kan också göra",
 		puzzle: [S.tee, S.line.vertical.four, S.line.horizontal.four, S.line.vertical.four, S.knight.unflipped.south, S.knight.flipped.south, S.line.horizontal.four, S.line.vertical.three]
 	},
 	{
@@ -214,7 +214,7 @@ var puzzles = [
 		puzzle:	[S.knight.unflipped.south, S.knight.unflipped.west, S.knight.flipped.north, S.knight.flipped.west]
 	},
 	{
-		tip: "Blocks only merge when they form a block which can be shrunken",
+		tip: "Mono culture",
 		puzzle: [S.dot, S.knight.unflipped.north, S.knight.unflipped.north, S.knight.unflipped.south, S.knight.unflipped.west, S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
