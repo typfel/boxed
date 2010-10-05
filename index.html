@@ -12,18 +12,20 @@
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
-		<div id="topbar">
-			<span id="feedback-button">Give Feedback</span>
+		<div id="topbar-background">
+			<div id="topbar">
+				<span id="feedback-button">Give Feedback</span>
+				
+				<div id="feedback" class="hidden">
+					<form>
+						<textarea name="message" placeholder="So what did you think?"></textarea><br/>
+						<input id="feedback-send" type="button" value="Send feedback" /> or
+						<a href="#" id="feedback-close">close</a>
+					</form>
+				</div>
+			</div>
 		</div>
-		
-		<div id="feedback" class="hidden">
-			<form>
-				<textarea name="message" placeholder="So what did you think?"></textarea><br/>
-				<input id="feedback-send" type="button" value="Send feedback" /> or
-				<a href="#" id="feedback-close">close</a>
-			</form>
-		</div>
-		
+				
 		<div id="playfield-container">
 		<div id="playfield-shadow"></div>
 		<div id="playfield">
