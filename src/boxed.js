@@ -10,7 +10,7 @@ var S = {
 	
 	line:
 	{
-		vertical: 
+		horizontal: 
 		{
 			two:
 			[[1,1]],
@@ -25,7 +25,7 @@ var S = {
 			[[1,1,1,1,1]],
 		},
 		
-		horizontal:
+		vertical:
 		{
 			two:
 			[[1],
@@ -203,7 +203,7 @@ var puzzles = [
 	},
 	{
 		tip: "Meh meh meh",
-		puzzle: [S.line.vertical.four, S.knight.unflipped.north, S.knight.unflipped.west]
+		puzzle: [S.line.horizontal.four, S.knight.unflipped.north, S.knight.unflipped.west]
 	},
 	{
 		tip: "Blocks grouped together can merge into a smaller version of itself",
