@@ -203,7 +203,7 @@ var puzzles = [
 	},
 	{
 		tip: "Meh meh meh",
-		puzzle: [S.line.horizontal.four, S.knight.unflipped.north, S.knight.unflipped.west]
+		puzzle: [S.line.vertical.four, S.knight.unflipped.north, S.knight.unflipped.west]
 	},
 	{
 		tip: "Så här kan också göra",
