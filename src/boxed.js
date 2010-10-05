@@ -166,15 +166,15 @@ var puzzles = [
 		puzzle: [S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
-		tip: "The final shape of the block doesn't doesn't matter as long as it's a larger version of a smaller shape.",
+		tip: "The shape of the block doesn't matter as long as its size can be cut in half",
 		puzzle: [S.line.vertical.three, S.line.vertical.two, S.line.horizontal.three, S.line.horizontal.four]
 	},
 	{
-		tip: "Sometimes intermediate blocks have to be created first.",
+		tip: "Sometimes intermediate blocks have to be created.",
 		puzzle: [S.diagonal.north.two, S.line.vertical.two, S.line.vertical.two]
 	},
 	{
-		tip: "The big square doesn't shrink because it has odd length sides",
+		tip: "The big block doesn't shrink because its length of three can't be cut in half",
 		puzzle: [S.box3, S.line.vertical.three, S.line.horizontal.four]
 	},
 	{
