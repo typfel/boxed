@@ -1,2 +1,4 @@
 - Collision detection collapses at high speeds
 - Online javascript isn't minified
+- Application needs an offline manifest
+- Puzzle tip need a 'click/tap to to start' reminder
