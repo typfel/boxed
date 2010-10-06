@@ -33,6 +33,28 @@ body {
 	visibility: hidden;
 }
 
+.button {
+	padding-left: 4px;
+	padding-right: 4px;
+	font-size: 15px;
+	font-family: helvetica;
+	height: 35px; line-height: 12px;
+	color: white;
+	
+	border: 5px;
+	-webkit-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
+	-webkit-background-clip: padding;
+	
+	-moz-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
+	-moz-background-clip: padding;
+}
+
+.button:active {
+	color: rgb(220, 220, 220);
+	-webkit-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
+	-moz-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
+}
+
 #playfield-container {
 	margin: 0 auto;
 	position: relative;
@@ -114,25 +136,23 @@ body {
 #feedback-button {
 	float: right;
 	margin-top: 10px;
-	padding-left: 4px;
-	padding-right: 4px;
-	font-size: 15px;
-	font-family: helvetica;
-	height: 25px; line-height: 25px;
-	color: white;
-	
-	border: 5px;
-	-webkit-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
-	-webkit-background-clip: padding;
-	
-	-moz-border-image: url("/images/pixelborder_red_fill.png") 5 round stretch;
-	-moz-background-clip: padding;
 }
 
 #feedback-button.pressed {
 	color: rgb(220, 220, 220);
 	-webkit-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
 	-moz-border-image: url("/images/pixelborder_red_inv_fill.png") 5 round stretch;
+}
+
+#menu-button {
+	float: left;
+	margin-top: 10px;
+}
+
+#reset-button {
+	float: left;
+	margin-top: 10px;
+	margin-left: 10px;
 }
 
 #puzzle-selection-table {

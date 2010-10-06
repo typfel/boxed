@@ -14,7 +14,9 @@
 	<body>
 		<div id="topbar-background">
 			<div id="topbar">
-				<span id="feedback-button">Give Feedback</span>
+				<button id="menu-button" class="button">Menu</button>
+				<button id="reset-button" class="button">Reset</button>
+				<button id="feedback-button" class="button">Give Feedback</button>
 				
 				<div id="feedback" class="hidden">
 					<form>
@@ -93,8 +95,8 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				boxed = new Boxed(document.getElementById("playfield"));
-				progress = new ProgressRecorder(document.getElementById("puzzle-selection"), boxed);
-				tipster = new PuzzleTipster($("#puzzle-tip"), boxed);
+				progress = new ProgressRecorder($('#puzzle-selection'), $('#menu-button'), $('#reset-button'), boxed);
+				tipster = new PuzzleTipster($('#puzzle-tip'), boxed);
 			});
 			
 			$('#feedback-button').click(function (event) {

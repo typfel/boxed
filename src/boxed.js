@@ -953,14 +953,19 @@ Boxed.prototype = {
 		}, this);
 	},
 
-	play: function (puzzleIndex) {		
+	play: function (puzzleIndex, reset) {	
 		this.pieces.forEach(function (block) {
 			this.removeBlock(block);
 		}, this);
 		
 		this.pieces = [];
 		this.layoutBlocks(puzzles[puzzleIndex-1].puzzle);
-		$(this).trigger('boxed.began', [puzzles[puzzleIndex-1]]);
+		
+		if (!reset) {
+			$(this).trigger('boxed.began', [puzzles[puzzleIndex-1]]);
+		} else {
+			$(this).trigger('boxed.reset', [puzzles[puzzleIndex-1]]);
+		}
 	},
 	
 	began: function (callback) {
@@ -1066,7 +1071,7 @@ Boxed.prototype = {
 	}
 };
 
-function ProgressRecorder(dialog, boxed) {
+function ProgressRecorder(dialog, menuButton, resetButton, boxed) {
 	this.dialog = dialog;
 	this.boxed = boxed;
 	
@@ -1085,10 +1090,26 @@ function ProgressRecorder(dialog, boxed) {
 		$(dialog).hide();
 	});
 	
+	$(menuButton).click(function (event) {
+		$(menuButton).toggleClass("pressed");
+		
+		if (puzzle) {
+			// toggle menu on/off if a puzzle has been loaded
+			$(dialog).toggle();
+		}
+	});
+	
+	$(resetButton).click(function (event) {
+		if (puzzle) {
+			boxed.play(puzzle, true);
+		}
+	});
+	
 	boxed.solved(function () {
 		$(dialog).find('.puzzle-selection-button[href=' + puzzle + ']').addClass("solved");
 		$(dialog).show();
 		localStorage.setItem(puzzle, true);
+		puzzle = null;
 	});
 }
 
