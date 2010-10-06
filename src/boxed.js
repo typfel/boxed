@@ -51,6 +51,51 @@ var S = {
 		}
 	},
 	
+	dbleline:
+	{
+		horizontal:
+		{
+			three:
+			[[1,1,1],
+			 [1,1,1]],
+		},
+		
+		vertical:
+		{
+			three:
+			[[1,1],
+			 [1,1],
+			 [1,1]],
+		}
+	},
+	
+	zorrow:
+	{
+		unflipped:
+		{
+			horizontal:
+			[[1,1,0],
+			 [0,1,1]],
+			
+			vertical:
+			[[0,1],
+			 [1,1],
+			 [1,0]],
+		},
+		
+		flipped:
+		{
+			horizontal:
+			[[0,1,1],
+			 [1,1,0]],
+			
+			vertical:
+			[[1,0],
+			 [1,1],
+			 [0,1]],
+		}
+	},
+	
 	knight:
 	{
 		unflipped:
@@ -232,6 +277,18 @@ var puzzles = [
 	{
 		tip: "Symmetry is a pretty",
 		puzzle: [S.diagonal.north.three, S.diagonal.east.three, S.diagonal.south.three, S.diagonal.west.three, S.line.vertical.four, S.line.vertical.three, S.line.vertical.four, S.line.vertical.three, S.line.horizontal.four, S.line.horizontal.three, S.line.horizontal.four, S.line.horizontal.three]
+	},
+	{
+		tip: "Clearcutting",
+		puzzle: [S.dbleline.vertical.three, S.dbleline.vertical.three, S.dbleline.vertical.three, S.dbleline.horizontal.three, S.dbleline.horizontal.three, S.dbleline.horizontal.three, S.line.vertical.three]
+	},
+	{
+		tip: "Anaconda attack",
+		puzzle: [S.dot, S.zorrow.unflipped.horizontal, S.zorrow.unflipped.horizontal, S.zorrow.flipped.vertical, S.diagonal.east.three, S.diagonal.east.three, S.dot]
+	},
+	{
+		tip: "Space ships don't need wings",
+		puzzle: [S.dbleline.vertical.three, S.knight.flipped.north, S.knight.unflipped.north, S.zorrow.unflipped.vertical, S.zorrow.flipped.vertical, S.line.horizontal.three, S.line.horizontal.three]
 	}
 ];
 
