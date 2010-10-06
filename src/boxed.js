@@ -166,7 +166,7 @@ var puzzles = [
 		puzzle: [S.knight.unflipped.north, S.knight.unflipped.south]
 	},
 	{
-		tip: "The shape of the block doesn't matter as long as its size can be cut in half",
+		tip: "The shape of the block doesn't matter as long as it matches a shape magnified 2x",
 		puzzle: [S.line.vertical.three, S.line.vertical.two, S.line.horizontal.three, S.line.horizontal.four]
 	},
 	{
@@ -174,7 +174,7 @@ var puzzles = [
 		puzzle: [S.diagonal.north.two, S.line.vertical.two, S.line.vertical.two]
 	},
 	{
-		tip: "The big block doesn't shrink because its length of three can't be cut in half",
+		tip: "The big block doesn't shrink because it consists of an odd number of bricks",
 		puzzle: [S.box3, S.line.vertical.three, S.line.horizontal.four]
 	},
 	{
