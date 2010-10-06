@@ -15,7 +15,7 @@
 	display: none;
 }
 
-#feedback-button {
+#feedback-button, #menu-button, #reset-button {
 	display: none;
 }
 
