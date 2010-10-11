@@ -921,10 +921,12 @@ Boxed.prototype = {
 	},
 		
 	_resolveConflicts: function (block) {
-		this._applyBorderConstraints(block);
-		
 		var queue = [];
+		var resolution;
+		var position = block.getPosition();
 		
+		this._applyBorderConstraints(block);
+						
 		this.pieces.forEach(function (anotherBlock) {
 			if (block != anotherBlock) {
 				if (boundingBoxTest(block.getBBox(), anotherBlock.getBBox())) {
@@ -940,6 +942,8 @@ Boxed.prototype = {
 		while (queue.length > 0) {
 			this._resolveConflicts(queue.shift());
 		}
+		
+		return (position.x == block.getPosition().x && position.y == block.getPosition().y);
 	},
 	
 	_alignBlockToGrid: function (block, callback) {
@@ -1046,10 +1050,10 @@ Boxed.prototype = {
 		
 		var xdelta = (dx - block.ddx);
 		var ydelta = (dy - block.ddy);
-		
+				
 		var x = block.lastPosition.x + xdelta;
 		var y = block.lastPosition.y + ydelta;
-						
+								
 		block.ddx = dx;
 		block.ddy = dy;
 		
@@ -1057,24 +1061,21 @@ Boxed.prototype = {
 		
 		var major = Math.max(Math.abs(xdelta), Math.abs(ydelta));
 		if (major > blockSize) {
-			var steps = Math.floor(major / blockSize);
-			
-			if (Math.abs(xdelta) > Math.abs(ydelta)) {
-				xstep = blockSize;
-				ystep = ydelta / steps;
-			} else {
-				xstep = xdelta / steps;
-				ystep = blockSize;
-			}
+			var steps = Math.floor(major / blockSize);						
+			var xstep = xdelta / steps;
+			var ystep = ydelta / steps;
 			
 			for (var step = 1; step <= steps; step++) {
 				block.setPosition(block.lastPosition.x + step * xstep, block.lastPosition.y + step * ystep);
-				this._resolveConflicts(block);
+				if (!this._resolveConflicts(block)) {
+					// resolution loop (initial block affected)
+					return;
+				}
 			}
+		} else {
+			block.setPosition(x, y);
+			this._resolveConflicts(block);	
 		}
-				
-		block.setPosition(x, y);
-		this._resolveConflicts(block);
 	},
 	
 	released: function (block) {
