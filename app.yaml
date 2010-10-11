@@ -12,6 +12,11 @@ handlers:
 
 - url: /src
   static_dir: src
+  
+- url: /cache.manifest
+  static_files: cache.manifest
+  upload: cache.manifest
+  mime_type: text/cache-manifest
 
 - url: /.*
   script: main.py
