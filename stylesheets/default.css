@@ -4,6 +4,11 @@ body {
 	width: 100%;
 	margin: 0px;
 	background: rgb(120, 100, 140) url(/images/question_pattern.png);
+	
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
 }
 
 .centering-container {
@@ -56,7 +61,6 @@ body {
 }
 
 #playfield-container {
-	margin: 0 auto;
 	position: relative;
 	z-index: 1;
 }
@@ -96,9 +100,8 @@ body {
 }
 
 #topbar {
-	margin: 0 auto;
 	position: relative;
-	height: 100px;
+	height: 40px;
 	width: 810px;
 }
 
@@ -135,7 +138,6 @@ body {
 
 #feedback-button {
 	float: right;
-	margin-top: 10px;
 }
 
 #feedback-button.pressed {
@@ -146,12 +148,10 @@ body {
 
 #menu-button {
 	float: left;
-	margin-top: 10px;
 }
 
 #reset-button {
 	float: left;
-	margin-top: 10px;
 	margin-left: 10px;
 }
 
