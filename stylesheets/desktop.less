@@ -1,0 +1,30 @@
+@import "base.less";
+
+@width: 800px;
+@height: 600px;
+
+#topbar {
+	width: @width + 10px;
+}
+
+#playfield-container {
+	width: @width + 10px;
+	height: @height + 10px;
+	
+	#playfield {
+		width: @width;
+		height: @height;
+	}
+}
+
+#puzzle-selection .table {
+	@button-size: 50px;
+	width: @button-size * 6 + 10px;
+	height: @button-size * 6 + 10px;
+	
+	.puzzle-button {
+		height: @button-size;
+		width: @button-size;
+		line-height: @button-size;
+	}
+}

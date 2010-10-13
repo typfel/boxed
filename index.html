@@ -6,14 +6,15 @@
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 		
 		<link rel="icon" href="/images/favicon.png">
-		<link rel="stylesheet" href="stylesheets/desktop.css" media="all and (min-device-width: 481px)">
-		<link rel="stylesheet" href="stylesheets/mobile.css" media="all and (max-device-width: 480px)">
+		<link rel="stylesheet/less" href="stylesheets/desktop.less" media="all and (min-device-width: 481px)">
+		<link rel="stylesheet/less" href="stylesheets/mobile.less" media="all and (max-device-width: 480px)">
 		
+		<script type="text/javascript" src="src/less.js"></script>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="src/boxed.js"></script>
 	</head>
 	<body>
-		<div id="topbar-background"></div>
+		<div id="top-background"></div>
 		<div id="topbar">
 			<button id="menu-button" class="button">Menu</button>
 			<button id="reset-button" class="button">Reset</button>
@@ -22,74 +23,72 @@
 			<div id="feedback" class="hidden">
 				<form>
 					<textarea name="message" placeholder="So what did you think?"></textarea><br/>
-					<input id="feedback-send" type="button" value="Send feedback" /> or
-					<a href="#" id="feedback-close">close</a>
+					<input id="send" type="button" value="Send feedback" /> or
+					<a href="#" id="close">close</a>
 				</form>
 			</div>
 		</div>
 				
 		<div id="playfield-container">
-		<div id="playfield-shadow"></div>
-		<div id="playfield">
+			<div id="shadow"></div>
+			<div id="playfield">
+				<div id="puzzle-selection">
+					<div class="table">
+						<div class="row">
+							<a class="puzzle-button" href="1">1</a>
+							<a class="puzzle-button" href="2">2</a>
+							<a class="puzzle-button" href="3">3</a>
+							<a class="puzzle-button" href="4">4</a>
+							<a class="puzzle-button" href="5">5</a>
+							<a class="puzzle-button" href="6">6</a>
+						</div>
+						<div class="row">
+							<a class="puzzle-button" href="7">7</a>
+							<a class="puzzle-button" href="8">8</a>
+							<a class="puzzle-button" href="9">9</a>
+							<a class="puzzle-button" href="10">10</a>
+							<a class="puzzle-button" href="11">11</a>
+							<a class="puzzle-button" href="12">12</a>
+						</div>
+						<div class="row">
+							<a class="puzzle-button" href="13">13</a>
+							<a class="puzzle-button" href="14">14</a>
+							<a class="puzzle-button" href="15">15</a>
+							<a class="puzzle-button" href="16">16</a>
+							<a class="puzzle-button" href="17">17</a>
+							<a class="puzzle-button" href="18">18</a>
+						</div>
+						<div class="row">
+							<a class="puzzle-button" href="19">19</a>
+							<a class="puzzle-button" href="20">20</a>
+							<a class="puzzle-button" href="21">21</a>
+							<a class="puzzle-button" href="22">22</a>
+							<a class="puzzle-button" href="23">23</a>
+							<a class="puzzle-button" href="24">24</a>
+						</div>
+						<div class="row">
+							<a class="puzzle-button" href="25">25</a>
+							<a class="puzzle-button" href="26">26</a>
+							<a class="puzzle-button" href="27">27</a>
+							<a class="puzzle-button" href="28">28</a>
+							<a class="puzzle-button" href="29">29</a>
+							<a class="puzzle-button" href="30">30</a>
+						</div>
+						<div class="row">
+							<a class="puzzle-button" href="31">31</a>
+							<a class="puzzle-button" href="32">32</a>
+							<a class="puzzle-button" href="33">33</a>
+							<a class="puzzle-button" href="34">34</a>
+							<a class="puzzle-button" href="35">35</a>
+							<a class="puzzle-button" href="36">36</a>
+						</div>
+					</div>
+				</div>
 				
-		<div id="puzzle-selection" class="centering-container">
-			<div id="puzzle-selection-table">
-				<div class="row">
-					<a class="puzzle-selection-button" href="1">1</a>
-					<a class="puzzle-selection-button" href="2">2</a>
-					<a class="puzzle-selection-button" href="3">3</a>
-					<a class="puzzle-selection-button" href="4">4</a>
-					<a class="puzzle-selection-button" href="5">5</a>
-					<a class="puzzle-selection-button" href="6">6</a>
-				</div>
-				<div class="row">
-					<a class="puzzle-selection-button" href="7">7</a>
-					<a class="puzzle-selection-button" href="8">8</a>
-					<a class="puzzle-selection-button" href="9">9</a>
-					<a class="puzzle-selection-button" href="10">10</a>
-					<a class="puzzle-selection-button" href="11">11</a>
-					<a class="puzzle-selection-button" href="12">12</a>
-				</div>
-				<div class="row">
-					<a class="puzzle-selection-button" href="13">13</a>
-					<a class="puzzle-selection-button" href="14">14</a>
-					<a class="puzzle-selection-button" href="15">15</a>
-					<a class="puzzle-selection-button" href="16">16</a>
-					<a class="puzzle-selection-button" href="17">17</a>
-					<a class="puzzle-selection-button" href="18">18</a>
-				</div>
-				<div class="row">
-					<a class="puzzle-selection-button" href="19">19</a>
-					<a class="puzzle-selection-button" href="20">20</a>
-					<a class="puzzle-selection-button" href="21">21</a>
-					<a class="puzzle-selection-button" href="22">22</a>
-					<a class="puzzle-selection-button" href="23">23</a>
-					<a class="puzzle-selection-button" href="24">24</a>
-				</div>
-				<div class="row">
-					<a class="puzzle-selection-button" href="25">25</a>
-					<a class="puzzle-selection-button" href="26">26</a>
-					<a class="puzzle-selection-button" href="27">27</a>
-					<a class="puzzle-selection-button" href="28">28</a>
-					<a class="puzzle-selection-button" href="29">29</a>
-					<a class="puzzle-selection-button" href="30">30</a>
-				</div>
-				<div class="row">
-					<a class="puzzle-selection-button" href="31">31</a>
-					<a class="puzzle-selection-button" href="32">32</a>
-					<a class="puzzle-selection-button" href="33">33</a>
-					<a class="puzzle-selection-button" href="34">34</a>
-					<a class="puzzle-selection-button" href="35">35</a>
-					<a class="puzzle-selection-button" href="36">36</a>
+				<div id="puzzle-tip" class="hidden">
+					<div id="message"><span>Puzzle tip goes here.</span></div>
 				</div>
 			</div>
-		</div>
-				
-		<div id="puzzle-tip" class="centering-container hidden">
-			<div id="message"><span>Puzzle tip goes here.</span></div>
-		</div>
-				
-		</div>
 		</div>
 						
 		<script type="text/javascript">
@@ -104,13 +103,13 @@
 				$('#feedback-button').toggleClass("pressed");
 			});
 			
-			$('#feedback-close').click( function (event) {
+			$('#feedback #close').click( function (event) {
 				event.preventDefault();
 				$('#feedback').toggleClass('hidden');
 				$('#feedback-button').toggleClass("pressed", false);
 			});
 			
-			$('#feedback-send').click(function (event) {
+			$('#feedback #send').click(function (event) {
 				$.ajax({
 					type: "post",
 					url: "/feedback",

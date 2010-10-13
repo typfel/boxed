@@ -1,0 +1,39 @@
+@import "base.less";
+
+@width: 300px;
+@height: 320px;
+
+#playfield-container {	
+	width: @width + 5px;
+	height: @height + 5px;
+	
+	#shadow {
+		display: none;
+	}
+	
+	#playfield {
+		width: @width;
+		height: @height;
+	}
+}
+
+#feedback-button, #menu-button, #reset-button {
+	display: none;
+}
+
+#puzzle-selection .table {
+	@button-size: 40px;
+	width: @button-size * 6 + 10px;
+	height: @button-size * 6 + 10px;
+	
+	.puzzle-button {
+		height: @button-size;
+		width: @button-size;
+		line-height: @button-size;
+	}
+}
+
+#puzzle-tip #message {
+	font-size: 25px;
+	width: 250px;
+}

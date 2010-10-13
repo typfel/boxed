@@ -11,9 +11,9 @@ CACHE MANIFEST
 /images/pixelshadow.png
 /images/question_pattern.png
 
-/stylesheets/default.css
-/stylesheets/desktop.css
-/stylesheets/mobile.css
+/stylesheets/default.less
+/stylesheets/desktop.less
+/stylesheets/mobile.less
 
 http://code.jquery.com/jquery-1.4.2.min.js
 /src/boxed.js
