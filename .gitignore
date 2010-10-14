@@ -1,2 +1,3 @@
-sources/*
+graphics/*
 .DS_Store
+cache.manifest
