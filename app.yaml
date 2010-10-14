@@ -17,6 +17,10 @@ handlers:
   static_files: cache.manifest
   upload: cache.manifest
   mime_type: text/cache-manifest
+  
+- url: /robot.txt
+  static_files: robot.txt
+  upload: robot.txt
 
 - url: /.*
   script: main.py

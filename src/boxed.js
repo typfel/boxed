@@ -1143,7 +1143,7 @@ function ProgressRecorder(dialog, menuButton, resetButton, boxed) {
 	
 	$(dialog).find('.puzzle-button').click(function(event) {
 		event.preventDefault();
-		puzzle = $(this).attr('href');
+		puzzle = $(this).attr('href').substring("puzzle/".length);
 		boxed.play(puzzle);
 		$(dialog).hide();
 	});
@@ -1164,9 +1164,9 @@ function ProgressRecorder(dialog, menuButton, resetButton, boxed) {
 	});
 	
 	boxed.solved(function () {
-		$(dialog).find('.puzzle-button[href=' + puzzle + ']').addClass("solved");
+		$(dialog).find('.puzzle-button[href="puzzle/' + puzzle + '"]').addClass("solved");
 		$(dialog).show();
-		localStorage.setItem(puzzle, true);
+		localStorage.setItem('puzzle/' + puzzle, true);
 		puzzle = null;
 	});
 }
