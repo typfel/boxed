@@ -6,6 +6,7 @@ api_version: 1
 handlers:
 - url: /stylesheets
   static_dir: stylesheets
+  mime_type: text/css
 
 - url: /images
   static_dir: images
@@ -17,6 +18,7 @@ handlers:
   static_files: cache.manifest
   upload: cache.manifest
   mime_type: text/cache-manifest
+  expiration: 1s
   
 - url: /robot.txt
   static_files: robot.txt

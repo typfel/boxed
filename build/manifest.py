@@ -5,8 +5,9 @@ from os import walk
 from glob import glob
 
 print "CACHE MANIFEST"
+print "CACHE:"
 
-filter_patterns = [".*", "*.py", "graphics", "build", "BUGS", "cache.manifest", "app.yaml", "deploy.sh"]
+filter_patterns = [".*", "*.py", "graphics", "build", "BUGS", "cache.manifest", "index.html", "app.yaml", "deploy.sh", "robot.txt"]
 expanded_patterns = reduce(lambda a, b: a + b, [glob(pattern) for pattern in filter_patterns])
 
 def filter_list(list, patterns, prefix):
@@ -18,7 +19,8 @@ def filter_list(list, patterns, prefix):
 for (root, dirs, files) in walk("."):
 	filter_list(dirs, expanded_patterns, root[2:] + '/')
 	filter_list(files, expanded_patterns, root[2:] + '/')
-	print "\n".join([os.path.join(root, file)[1:] for file in files])
+	if len(files) > 0:
+		print "\n".join([os.path.join(root, file)[1:] for file in files])
 	
 # External files
 print "http://code.jquery.com/jquery-1.4.2.min.js"
