@@ -20,9 +20,9 @@ handlers:
   mime_type: text/cache-manifest
   expiration: 1s
   
-- url: /robot.txt
-  static_files: robot.txt
-  upload: robot.txt
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
 
 - url: /.*
   script: main.py

@@ -7,7 +7,7 @@ from glob import glob
 print "CACHE MANIFEST"
 print "CACHE:"
 
-filter_patterns = [".*", "*.py", "graphics", "build", "BUGS", "cache.manifest", "index.html", "app.yaml", "deploy.sh", "robot.txt"]
+filter_patterns = [".*", "*.py", "graphics", "build", "BUGS", "cache.manifest", "index.html", "app.yaml", "deploy.sh", "robots.txt"]
 expanded_patterns = reduce(lambda a, b: a + b, [glob(pattern) for pattern in filter_patterns])
 
 def filter_list(list, patterns, prefix):
