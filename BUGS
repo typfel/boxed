@@ -1,3 +1,4 @@
 - Online javascript isn't minified
 - Puzzle tip need a 'click/tap to to start' reminder
+- Offline manifest needs verisioning hash
 - Doesn't work in firefox
