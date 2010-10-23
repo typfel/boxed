@@ -1200,9 +1200,7 @@ function ProgressRecorder(dialog, menuButton, resetButton, boxed) {
 		$(dialog).hide();
 	});
 	
-	$(menuButton).click(function (event) {
-		$(menuButton).toggleClass("pressed");
-		
+	$(menuButton).click(function (event) {		
 		if (puzzle) {
 			// toggle menu on/off if a puzzle has been loaded
 			$(dialog).toggle();
