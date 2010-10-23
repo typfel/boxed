@@ -292,26 +292,26 @@ var puzzles = [
 	}
 ];
 
-function boundingBoxTest(box1, box2) {
-	var xdelta = box1.x - box2.x;
-	var ydelta = box1.y - box2.y;
+function boundingBoxTest(position1, dim1, position2, dim2) {
+	var xdelta = position1.x - position2.x;
+	var ydelta = position1.y - position2.y;
 
 	if (xdelta > 0) {
-		if (box2.width < xdelta) {
+		if (dim2.width <= xdelta) {
 			return false;
 		}
 	} else {
-		if (-box1.width > xdelta) {
+		if (-dim1.width >= xdelta) {
 			return false;
 		}
 	}
 	
 	if (ydelta > 0) {
-		if (box2.height < ydelta) {
+		if (dim2.height <= ydelta) {
 			return false;
 		}
 	} else {
-		if (-box1.height > ydelta) {
+		if (-dim1.height >= ydelta) {
 			return false;
 		}
 	}
@@ -319,87 +319,93 @@ function boundingBoxTest(box1, box2) {
 	return true;
 }
 
-function getBlockCollisionResolution(block1, block2, blockSize) {
-	var bbox1 = block1.getBBox();
-	var bbox2 = block2.getBBox();
-	
-	var xdelta = bbox1.x - bbox2.x;
-	var ydelta = bbox1.y - bbox2.y;
+function getBlockCollisionResolution(position1, matrix1, position2, matrix2, delta, blockSize) {	
+	var xdelta = position1.x - position2.x;
+	var ydelta = position1.y - position2.y;
 		
-	var xoffset =  blockSize - xdelta.mod(blockSize);
-	var yoffset =  blockSize - ydelta.mod(blockSize);
-	var rxoffset = blockSize - xoffset;
-	var ryoffset = blockSize - yoffset;
+	var rxoffset = xdelta.mod(blockSize);
+	var ryoffset = ydelta.mod(blockSize);
+	var xoffset =  blockSize - rxoffset;
+	var yoffset =  blockSize - ryoffset;
 		
-	var size1 = block1.getSize();
-	var size2 = block2.getSize();
+	var size1 = { width: matrix1[0].length, height: matrix1.length };
+	var size2 = { width: matrix2[0].length, height: matrix2.length };
 			
 	var m = xdelta / blockSize;
 	var n = ydelta / blockSize;
+	
+	var xlook = rxoffset === 0 ? 0 : 1;
+	var ylook = ryoffset === 0 ? 0 : 1;
 		
-	function check(x, y) {
-		if (x >= 0 && x < size2.width && y >= 0 && y < size2.height) {
-			return block2.matrix[y][x];
-		}
-		return 0;
-	}
+	var delta_se = delta.x >= 0 && delta.y >= 0;
+	var delta_sw = delta.x <= 0 && delta.y >= 0;
+	var delta_ne = delta.x >= 0 && delta.y <= 0;
+	var delta_nw = delta.x <= 0 && delta.y <= 0;
 	
 	var resolution = { x: 0, y: 0 };
 		
+	function resolve(horizontal, vertical, hdirection, vdirection, hoffset, voffset) {
+		if (horizontal) {
+			resolution.x = hoffset;
+		} else if (vertical) {
+			resolution.y = voffset;
+		} else if (hdirection) {
+			resolution.x = hoffset;
+		} else if (vdirection) {
+			resolution.y = voffset;
+		} else if (Math.abs(hoffset) < Math.abs(voffset)) {
+			resolution.x = hoffset;
+		} else {
+			resolution.y = voffset;
+		}
+	}
+		
+	function check(matrix, size, x, y) {
+		if (x >= 0 && x < size.width && y >= 0 && y < size.height) {
+			return matrix[y][x];
+		}
+		return 0;
+	}
+			
 	for (var i = 0; i < size1.width; i++) {
 		for (var j = 0; j < size1.height; j++) {
 			
-			if (!block1.matrix[j][i]) {
+			if (!matrix1[j][i]) {
+				// Empty cell
 				continue;
 			}
 			
+			var top = check(matrix1, size1, i, j + 1);
+			var bottom = check(matrix1, size1, i, j - 1);
+			var right = check(matrix1, size1, i + 1, j);
+			var left = check(matrix1, size1, i - 1, j);
+							
+			// Convert matrix1 cell coordinates into matrix2 space		
 			var s = Math.floor(i + m);
 			var t = Math.floor(j + n);
 						
-			var a = check(s, t);
-			var b = check(s + 1, t);
-			var c = check(s, t + 1);
-			var d = check(s + 1, t + 1);
-			
-			/*
-			if (a || b || c || d) {
-				console.log("a: " + a);
-				console.log("b: " + b);
-				console.log("c: " + c);
-				console.log("d: " + d);
-				console.log("---");
-			} */
-						
+			// Check for collisions with the surrouding cells in matrix2
+			var a = check(matrix2, size2, s, t);
+			var b = check(matrix2, size2, s + xlook, t);
+			var c = check(matrix2, size2, s, t + ylook);
+			var d = check(matrix2, size2, s + xlook, t + ylook);
+									
 			if (a + b + c + d == 1) {
+				// Collision with a single cell in matrix2.
+				
 				if (a) {
-					if (xoffset < yoffset) {
-						resolution.x = xoffset;
-					} else {
-						resolution.y = yoffset;
-					}
-				} else
-				if (b) {
-					if (rxoffset < yoffset) {
-						resolution.x = -rxoffset;
-					} else {
-						resolution.y = yoffset;
-					}
-				} else
-				if (c) {
-					if (xoffset < ryoffset) {
-						resolution.x = xoffset;
-					} else {
-						resolution.y = -ryoffset;
-					}
+					resolve(bottom, left, delta_sw, delta_ne, xoffset, yoffset);
+				} else if (b) {
+					resolve(bottom, right, delta_se, delta_nw, -rxoffset, yoffset);
+				} else if (c) {
+					resolve(top, left, delta_nw, delta_se, xoffset, -ryoffset);
 				} else {
-					if (rxoffset < ryoffset) {
-						resolution.x = -rxoffset;
-					} else {
-						resolution.y = -ryoffset;
-					}
+					resolve(top, right, delta_ne, delta_sw, -rxoffset, -ryoffset);
 				}
 			}
 			else {
+				// Collision with two adjacent cells in matrix2
+				 
 				if (a && b) {
 					resolution.y = yoffset;
 				} else
@@ -417,7 +423,7 @@ function getBlockCollisionResolution(block1, block2, blockSize) {
 		}
 	}
 		
-	return resolution;
+	return { x: -resolution.x, y: -resolution.y };
 }
 
 Transforms = {
@@ -569,6 +575,10 @@ Block.prototype = {
 	
 	getSize: function () {
 		return { width: this._matrixSize.width, height: this._matrixSize.height };
+	},
+	
+	getDimensions: function() {
+		return { width: this._size.width, height: this._size.height };
 	},
 	
 	getOffset: function () {
@@ -906,46 +916,80 @@ Boxed.prototype = {
 							
 		return solutions;
 	},
-	
-	_applyBorderConstraints: function (block) {
-		var position = block.getPosition();
-		var bbox = block.getBBox();
 		
-		position.x = position.x < 0 ? 0 : position.x;
-		position.y = position.y < 0 ? 0 : position.y;
+	_resolveBorderConstraints: function (dimensions, position) {
+		var resolution = { x: 0, y: 0 };
+		resolution.x = position.x < 0 ? 0 : position.x;
+		resolution.y = position.y < 0 ? 0 : position.y;
 		
-		position.x = Math.min(position.x, this.containerWidth - bbox.width);
-		position.y = Math.min(position.y, this.containerHeight - bbox.height);
+		resolution.x = Math.min(resolution.x, this.containerWidth - dimensions.width);
+		resolution.y = Math.min(resolution.y, this.containerHeight - dimensions.height);
 		
-		block.setPosition(position.x, position.y);
+		return { x: resolution.x - position.x, y: resolution.y - position.y };
 	},
+	
+	_resolveCollisions: function (block, delta) {
+		var position = { x: block.getPosition().x + delta.x, y: block.getPosition().y + delta.y };
+		var dimensions = block.getDimensions();
+		var resolution = { x: delta.x , y: delta.y };
 		
-	_resolveConflicts: function (block) {
-		var queue = [];
-		var resolution;
-		var position = block.getPosition();
-		
-		this._applyBorderConstraints(block);
+		var borderResolution = this._resolveBorderConstraints(dimensions, position);
 						
-		this.pieces.forEach(function (anotherBlock) {
-			if (block != anotherBlock) {
-				if (boundingBoxTest(block.getBBox(), anotherBlock.getBBox())) {
-					resolution = getBlockCollisionResolution(block, anotherBlock, this.blockSize);
-					if (resolution.x !== 0 || resolution.y !== 0) {
-						anotherBlock.setPosition(anotherBlock.getPosition().x - resolution.x, anotherBlock.getPosition().y - resolution.y);
-						queue.push(anotherBlock);
+		this.pieces.forEach(function (otherBlock) {
+			var otherPosition = otherBlock.getPosition();
+			var otherDimensions = otherBlock.getDimensions();
+			
+			if (block != otherBlock && boundingBoxTest(position, dimensions, otherPosition, otherDimensions)) {
+				var collisionResolution = getBlockCollisionResolution(position, block.matrix, otherPosition, otherBlock.matrix, delta, this.blockSize);
+				
+				if (collisionResolution.x != 0 || collisionResolution.y != 0) {
+					var blockResolution = this._resolveCollisions(otherBlock, collisionResolution);
+										
+					if (collisionResolution.x != 0) {
+						var a = delta.x - (collisionResolution.x - blockResolution.x);
+						if (Math.abs(a) < Math.abs(resolution.x)) {
+							resolution.x = a;	
+						}
+					}
+					if (collisionResolution.y != 0) {
+						var b = delta.y - (collisionResolution.y - blockResolution.y);
+						if (Math.abs(b) < Math.abs(resolution.y)) {
+							resolution.y = b;
+						}
 					}
 				}
 			}
 		}, this);
-				
-		while (queue.length > 0) {
-			this._resolveConflicts(queue.shift());
+		
+		if (Math.abs(borderResolution.x) > 0) {
+			resolution.x = delta.x + borderResolution.x;
 		}
 		
-		return (position.x == block.getPosition().x && position.y == block.getPosition().y);
+		if (Math.abs(borderResolution.y) > 0) {
+			resolution.y = delta.y + borderResolution.y;
+		}
+		
+		return resolution;
 	},
 	
+	_moveBlockTo: function(block, delta) {
+		var oldPosition = block.getPosition();
+		var newPosition = { x: oldPosition.x + delta.x, y: oldPosition.y + delta.y };
+		block.setPosition(newPosition.x, newPosition.y);
+		
+		this.pieces.forEach(function (anotherBlock) {
+			var anotherPosition = anotherBlock.getPosition();
+			var anotherSize = anotherBlock.getDimensions();
+			
+			if (block != anotherBlock && boundingBoxTest(block.getPosition(), block.getDimensions(), anotherPosition, anotherSize)) {
+				var collisionResolution = getBlockCollisionResolution(block.getPosition(), block.matrix, anotherPosition, anotherBlock.matrix, delta, this.blockSize);
+				if (collisionResolution.x != 0 || collisionResolution.y != 0) {
+					this._moveBlockTo(anotherBlock, collisionResolution);
+				}
+			}
+		}, this);
+	},
+			
 	_alignBlockToGrid: function (block, callback) {
 		var blockSize = this.blockSize;
 		var position = block.getPosition();
@@ -1061,20 +1105,28 @@ Boxed.prototype = {
 		
 		var major = Math.max(Math.abs(xdelta), Math.abs(ydelta));
 		if (major > blockSize) {
-			var steps = Math.floor(major / blockSize);						
-			var xstep = xdelta / steps;
-			var ystep = ydelta / steps;
-			
+			var steps = Math.ceil(major / blockSize);						
+			var xstep = xdelta > 0 ? Math.floor(xdelta / steps) : Math.ceil(xdelta / steps);
+			var ystep = ydelta > 0 ? Math.floor(ydelta / steps) : Math.ceil(ydelta / steps);
+			var xrest = xdelta - xstep * steps;
+			var yrest = ydelta - ystep * steps;
+						
 			for (var step = 1; step <= steps; step++) {
-				block.setPosition(block.lastPosition.x + step * xstep, block.lastPosition.y + step * ystep);
-				if (!this._resolveConflicts(block)) {
-					// resolution loop (initial block affected)
+				var delta = { x: xstep, y: ystep };
+				var resolution = this._resolveCollisions(block, delta);
+				if (resolution.x != 0 || resolution.y != 0) {
+					this._moveBlockTo(block, resolution);
+				} else {
 					return;
 				}
 			}
+			
+			var resolution = this._resolveCollisions(block, { x: xrest, y: yrest });
+			if (resolution.x != 0 || resolution.y != 0) {
+				this._moveBlockTo(block, resolution);
+			}
 		} else {
-			block.setPosition(x, y);
-			this._resolveConflicts(block);	
+			this._moveBlockTo(block, this._resolveCollisions(block, { x: xdelta, y: ydelta }));
 		}
 	},
 	
